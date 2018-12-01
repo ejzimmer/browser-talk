@@ -11,11 +11,13 @@
       background: black;
       height: 100vh;
       filter: url('#amoeba');
+      --goo-hue: 84;
     }
     .circle {
+      --goo-colour: hsl(var(--goo-hue), 100%, 50%);
       border-radius: 50%;
-      box-shadow: 0 0 50px greenyellow, inset 0 0 50px greenyellow;
-      background-color: hsla(84, 100%, 59%, .2);
+      box-shadow: 0 0 50px var(--goo-colour), inset 0 0 50px var(--goo-colour);
+      background-color: hsla(var(--goo-hue), 100%, 59%, .2);
       position: fixed;
     }
   </style>
@@ -40,6 +42,8 @@
       const diameter = Math.random() * 100 + 50;
       circle.style.width = `${diameter}px`;
       circle.style.height = `${diameter}px`;
+
+      circle.style.setProperty('--goo-hue', Math.random() * 255);
 
       const x = Math.random() * (window.innerWidth - diameter);
       const y = Math.random() * (window.innerHeight - diameter);
