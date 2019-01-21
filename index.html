@@ -3,24 +3,2886 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Autopsy of a Browser</title>
+  <title>Autopsy of a browser</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      height: 100vh;
-      filter: url('#amoeba');
-      --goo-hue: 84;
-    }
-    .circle {
-      --goo-colour: hsl(var(--goo-hue), 100%, 50%);
-      border-radius: 50%;
-      box-shadow: 0 0 50px var(--goo-colour), inset 0 0 50px var(--goo-colour);
-      background-color: hsla(var(--goo-hue), 100%, 59%, .2);
-      position: fixed;
-    }
-  </style>
+
+  <link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
+  <link rel="stylesheet" href="reveal/reveal.css">
+  <script src="reveal/reveal.js"></script>
+
+  <link rel="stylesheet" href="slides.css">
+  <link rel="stylesheet" href="zenburn.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <div class="page">
+          <h1>Autopsy Report</h1>
+          <img style="margin-top: 100px" src="images/netscape-loading.gif" />
+        </div>
+        <aside class="notes">
+          - Netscape dead 
+          - Investigate circumstances leading to death 
+          - Cut it up and see what we can learn
+        </aside>
+      </section>
+
+      <section data-state="ooze" id="ooze-slide">
+        <script>
+          Reveal.addEventListener('ooze', () => {
+            const section = document.getElementById('ooze-slide');
+            section.style.filter = 'url("#amoeba")';
+
+            const area = window.innerWidth * window.innerHeight;
+            const numberOfBlobs = area / 10000 * .75;
+        
+            for (let i = 0; i < numberOfBlobs; i++) {
+              const circle = document.createElement('div');
+              circle.classList.add('circle');
+        
+              const diameter = Math.random() * 100 + 50;
+              circle.style.width = `${diameter}px`;
+              circle.style.height = `${diameter}px`;
+                
+              const x = Math.random() * (window.innerWidth - diameter);
+              const y = Math.random() * (window.innerHeight - diameter);
+              circle.style.transform = `translate(${x}px, ${y}px)`;
+
+              circle.setDestination = function () {
+                const x = Math.random() * (window.innerWidth - diameter);
+                const y = Math.random() * (window.innerHeight - diameter);
+                this.style.transform = `translate(${x}px, ${y}px)`;        
+              }
+        
+              section.appendChild(circle);
+                
+              circle.addEventListener('transitionend', function () {
+                this.setDestination();
+              });
+            }
+
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                document.querySelectorAll('.circle').forEach((circle) => {
+                  circle.setDestination();
+                  circle.style.transition = `transform ${Math.random() * 30 + 20}s`;
+                })
+              });
+            });
+
+            Reveal.addEventListener('slidechanged', (event) => {
+              if (event.currentSlide !== section) {
+                document.querySelectorAll('.circle').forEach(circle => circle.remove());
+              }
+            });
+          });
+        </script>  
+        <aside class="notes">
+          In the beginning, there were the protobrowsers, swimming about in the primordial data
+          DOS Maxthink, Houdini (network browser), HyperRez, PC Hypertext, HyperBBS, HyperLAN & Silversmith
+          All used hypertext (although not HTML)
+          Could link to ASCII and batch files, as well as that system's proprietary files
+          Largely focussed on building knowledge systems, kind of like Wikipedia today
+        </aside>    
+      </section>
+  
+      <section data-background="images/PageLink.jpg" data-background-position="top" data-transition="fade">
+        <a class="footnote contrast" href="https://www.siliconglen.scot/pagelink/">https://www.siliconglen.scot/pagelink/</a>
+        <aside class="notes">
+          Honourable mention to Craig Cockburn at DEC who essentially invented the 
+          smartphone in 1990, before the web, before mobile phones - before 
+          DEC even believed that PCs were going to be a thing.
+
+          All the ingredients were there - internet > 20 years, hypertext around
+          We were ready for...
+        </aside>
+      </section>
+
+
+      <section class="center">
+        <h2>The World Wide Web</h2>
+        <aside class="notes">
+          - system of HTML pages being served over HTTP that's what web browsers work with today
+          - Sir Tim Berners-Lee - 1990ish - URL, first HTTP server, first browser, HTML & HTTP, editor
+        </aside>
+      </section>
+
+      <section class="center">
+        <ul style="margin: auto">
+          <li class="fragment">HTTP</li>
+          <li class="fragment">HTML</li>
+          <li class="fragment">URLs</li>
+          <li class="fragment">browser & server implementation</li>
+          <li class="fragment">open standard</li>
+        </ul>
+      </section>  
+
+      <section>
+        <iframe src="http://info.cern.ch/hypertext/WWW/TheProject.html">
+        </iframe>
+        <div class="footnote contrast">http://info.cern.ch/hypertext/WWW/TheProject.html</div>
+        <aside class="notes">
+          - first ever web page is still around (resurrected by CERN)
+          - looks like crap - there was no CSS back then - and the HTML is nightmarish,
+          but it still _works_
+        </aside>  
+      </section>
+
+      <section data-background="images/WorldWideWeb_FSF_GNU.png" data-transition="fade">
+        <aside class="notes">
+          first browser - WorldWideWeb -> Nexus - ran on NeXT - also an editor
+          used for viewing scientific papers
+          author specified the structure of the document, using HTML
+          user decided how they wanted that structure to display
+          semantic HTML was a founding principle
+        </aside>
+        <a class="footnote contrast" href="https://en.wikipedia.org/wiki/WorldWideWeb">Courtesy of Wikipedia</a>
+      </section>
+
+      <section data-background-image="images/monocat.jpg">
+        <aside class="notes">
+          no pics in original browsers - just links to pics
+        </aside>
+      </section>
+
+      <section data-background="images/chessDemo.jpg" data-background-size="contain" data-transition="fade">
+        <div class="footnote">viola.org</div>
+        <aside class="notes">
+          - soon additional browsers appeared. most popular was violawww
+          - tables, forms, scripting, stylesheets, applets
+          - available on Unix systems only
+          - early versions were quite difficult to install
+          - very popular in academic community - recommnded browser at CERN - never generally popular
+          - so, in the early days, the web remained mostly confined to academic and government use
+        </aside>
+      </section>
+
+      <section class="center">
+        <h2>A Browser for the masses</h2>
+      </section>
+
+      <section data-background="images/Mosaic.gif" data-background-size="contain">
+        <aside class="notes">
+          - national center for supercomputing applications
+          - developed by Marc Andreesen, a student at NCSA
+          - not as good as ViolaWWW, in terms of features
+          - easy to install, good tech support, available cross-platform
+        </aside>
+      </section>
+
+      <section class="center">
+        <div>
+            I'd like to propose a new, optional HTML tag:<br>
+            IMG<br>
+            Required argument is SRC="url".<br>  
+            An example is:<br>
+            &lt;IMG SRC="file://foobar.com/foo/bar/blargh.xbm"&gt;           
+        </div>
+        <aside class="notes">
+          - original browsers didn't display images inline - you got a link that opened the 
+          image in your image viewing program
+          - February 1993, Andreesen proposed inline images
+          - generated a fair bit of discussion
+        </aside>
+      </section>
+
+      <section class="center">
+        <div>
+            &lt;ICON name="NoEntry" href="http://note/foo/bar/NoEntry.xbm"&gt;
+        </div>
+        <aside class="notes">
+          Tony Johnson, Midas browser - also IMAGE rather than ICON - no abbreviation
+        </aside>
+      </section>
+
+      <section class="center">
+         <div style="font-size:.85em">&lt;a name=fig1 href="fghjkdfghj" REL="EMBED, PRESENT"&gt;Figure &lt;/a&gt;</div>
+         <aside class="notes">
+           T BL - didn't want a new tag - reuse anchor tag with instructions to embed the contents 
+           - more generic solution
+         </aside>
+      </section>
+
+      <section class="center">
+        <div>
+            Otherwise, next week someone is going to suggest<br>
+             'lets put in a new tag <br>
+            &lt;AUD SRC="file://foobar.com/foo/bar/blargh.snd"&gt;' <br>
+            for audio.  
+        </div>
+        <aside class="notes">
+          And others shared his apprehension about new tags
+        </aside>
+      </section>
+
+      <section class="center">
+        <div>
+            So, we're probably going to go with &lt;IMG SRC="url"&gt;
+        </div>
+        <aside class="notes">
+          Thing was though, Andreesen wasn't really interested in a discussion 
+          He'd decided what he was going to do and he had the market share to do it
+          1994, Andreesen graduated and left NCSA to build his own browser
+        </aside>
+      </section>
+
+      <section data-background-image="images/invisible-bike-cat.jpeg"></section>
+
+      <section class="center">
+        <h2>Commercial browsers</h2>
+      </section>
+
+      <section>
+        <iframe src="http://home.mcom.com/MCOM/index.html"></iframe>
+        <a src="http://home.mcom.com/MCOM/index.html" class="footnote contrast">
+          http://home.mcom.com/MCOM/index.html
+        </a>  
+        <aside class="notes">
+          with Jim Clark, created Mosaic Communications
+          internally, the new browser was known as Mozilla - mosaic-killer
+          publically though, it was 
+        </aside>
+      </section>
+
+      <section data-background-image="images/mosaic-netscape.gif" data-background-size="contain">
+        <aside class="notes">
+          understandly, NCSA weren't impressed with the naming, so the browser was soon rebranded
+        </aside>
+      </section>
+
+      <section data-background-image="images/Netscape_icon.jpg" data-background-size="cover" data-background-position="center top"></section>
+
+      <section data-background-image="images/amazon-original.png" data-background-size="contain">
+        <aside class="notes">
+          the web was really taking off - and Netscape with it
+          but HTML wasn't really keeping up with its new role
+        </aside>
+      </section>
+
+      <section class="center vertical">
+        <p>
+          As we kneel before the altar of the "ha ha, you can't control what your
+          documents look like in HTML" philosophy, you, dear sinner (nay,
+          blasphemer), can but take solace in the fact that Mosaic is putting a
+          blank line at the start of all toplevel lists, including yours,
+          entirely on purpose...
+        </p> 
+        <p>
+          What can you do about it? Probably nothing. Isn't that cheery news?
+        </p>
+        <aside class="notes">
+          As Andreesen put it when someone asked him why Mosaic added a blank line at the 
+          start of lists... 
+          I get the feeling he might not have been the most pleasant person to deal with
+          At any rate, Andreesen dealt with this problem by coming up with his own HTML tags 
+          and attributes
+        </aside>
+      </section>
+
+      <section>
+        <iframe src="http://home.mcom.com/MCOM/index.html"></iframe>
+        <aside class="notes">
+          - click through to main menu page to show how CSS-less HTML could be styled
+        </aside>
+      </section>
+
+      <section class="center">
+        <pre><code class="html">
+&lt;A HREF="index2.map"&gt;
+  &lt;IMG SRC="images/mcomwelcome2.gif" BORDER=1 ISMAP&gt;
+&lt;/A&gt;
+        </code></pre>
+        <aside class="notes">
+          server-side image map - send click location to server to determine where link goes 
+          pretty shit from an accessibility point of view (although they give the links below - more likely 
+          because of poor browser support than concern for screen reader users)
+          did mean you could make your website look pretty much however you wanted
+        </aside>
+      </section>
+
+      <section class="center">
+        <pre><code class="html">&lt;FONT SIZE=+3&gt;A&lt;/FONT&gt;&lt;FONT SIZE=+2&gt;bout &lt;/FONT&gt;</code></pre>
+        <aside class="notes">
+          - this page uses center tags, width and size attributes on HR elements
+          - later pages added attributes for font & background colours, text alignments etc
+          popular advice at the time was to ignore semantic HTML in favour of making the browser 
+          do what you want
+        </aside>
+      </section>
+
+      <section>
+        <iframe src="https://www.warnerbros.com/archive/spacejam/movie/jam.htm" frameborder="0"></iframe>
+        <div class="footnote">http://warnerbros.com/archive/spacejam/movie/jam.htm</div>
+        <aside class="notes">
+          - by 1996, we could make pages like spacejam, which I think we can all agree is ... something
+          - footer margins are css - added later?
+          - the rest is entirely HTML - specifically table layouts - not bad people, no other option
+          - largely attributes like bgcolor, background, gifs for moving elements (The LineUp - image map (client-side) and gif)
+          - upset a lot of people - esp those who thought users should control styling - but doesn't seem to have 
+            bothered Andreesen or Netscape (and there were no practical alternatives)
+        </aside>
+      </section>
+
+      <section data-background-image="images/marc-andreessen-Time-magazine-cover-1996.jpeg" data-background-size="contain">
+        <aside class="notes">
+          80% market share - no competition  
+          IPO when the company was less than a year old & had made no money - $3 billion and kicked off the dotcom boom 
+          Andreesen so confident in the future of the web that he bragged 
+        </aside>
+      </section>
+
+      <section class="center">
+        <div style="font-size: 1.5em">...reduce Windows to a set of poorly debugged device drivers</div>
+      </section>
+
+      <section data-background-image="images/bill-gates-proof.jpg" data-background-size="contain">
+        <aside class="notes">
+          Which made Bill Gates really sit up and take notice
+          Licenced Spyglass Mosaic, which was a commercial licence of NCSA Mosaic
+        </aside>
+      </section>
+
+      <section data-background-image="images/ie1.0.jpg" data-background-size="80%">
+      </section>
+
+      <section class="center">
+        <h2>The First Browser War</h2>
+      </section>
+
+      <section class="center spaced contrast">
+        <img src="images/World_Wide_Web_Conference_1_(logo).gif" class="fragment" />
+        <img src="images/IETF_Logo.svg" class="fragment contrast" />
+        <img src="images/W3C_Icon.svg" class="fragment contrast" />
+        <aside class="notes">
+          There were standards bodies for HTML (JS & CSS didn't exist)
+          W3C 1994
+          IETF HTML working group 1994 - internet engineering task force
+          WWW conference - 1994
+          HTML 2 recommendation released - standardising features already implemented by browsers (Nov 1995)
+          HTML 3 - new standard for HTML - too big for browsers to implement all of - work begun on HTML 3
+        </aside>
+      </section>
+
+      <section class="center">
+        <div class="best-viewed-in">
+          <div>This site best viewed with</div>
+          <img src="images/netscape-now.jpg" />
+          <img src="images/internet-explorer.jpeg" />
+        </div>
+        <aside class="notes">
+          But the standards bodies moved slowly and the browser wars were hotting up
+          Netscape - technically superior, large user base 
+          IE - huge resources, Windows user base
+
+          Battle fought by adding new features to browsers 
+          Netscape - JavaScript & HTML styling, frames
+          JavaScript as companion to Java...
+          IE - ActiveX components & CSS; Netscape countered with a terrible implementation of CSS 
+           - they preferred their HTML - ran CSS as JS
+          Both implemented each others' features - JScript, Ncompass
+          Nightmare for webmasters - best viewed in
+  
+          *** add user agents here if spare time ***
+        </aside>
+      </section>
+
+      <section data-background-image="images/mozilla-uber-alles.jpg" data-background-size="cover">
+        <aside class="notes">
+          IE 4 launch party, October 1997
+          Netscape 72, Microsoft 18
+          Netscape still had edge, but it was slipping...
+        </aside>
+      </section>
+
+      <section class="center">
+        <ul>
+          <li class="fragment">1996: CSS1</li>
+          <li class="fragment">1997: HTML 3.2, ES 1, HTML 4.0</li>
+          <li class="fragment">1998: HTML 4.0 (revision), ES 2, CSS 2</li>
+          <li class="fragment">1999: HTML 4.01, ES 3</li>
+        </ul>
+        <aside class="notes">
+          Throughout this, the standards bodies pressed on.
+          HTML working group moved to W3C and made smaller & more efficient
+          First CSS standard released - although not widely implemented 
+          Standardisation of JavaScript - to save it from JScript - ecmascript due to trademark
+
+          ES2 - editorial changes
+          ES3 - exceptions, errors, regex
+
+          CSS2 - stacking contexts, fixes
+
+          HTML 3.2 - standardised existing horrible tags 
+          HTML 4 - push to make HTML semantic again - deprecated presentational attributes and elements, 
+          added id, class & style attributes, strict, transitional (loose) & frameset variants
+
+          Standards bodies were working to make the web better, but the web was moving very fast 
+          And, by this point, Microsoft and Netscape were more interested in winning than making a good product
+        </aside>
+      </section>
+
+      <section class="center">
+        <div style="font-size: 1.5em">...cut off Netscape's air supply</div>
+        <aside class="notes">
+          Paul Maritz, denied it later
+        </aside>
+      </section>
+
+      <section data-background-image="images/steve&bill.jpg" data-background-size="cover">
+        <aside class="notes">
+          bitter enemies
+          1997 - five year deal - IE the default browser on Mac in exchange for $150 million bailout from MS
+          replaced Netscape Navigator even though Steve Jobs said Navigator was the better browser
+
+          easy to see Gates as the bad guy - but Andreesen was just as bad
+        </aside>
+      </section>
+
+      <section class="center vertical">
+        <img src="images/aol-international.svg" style="align-self: center; max-height: 50vh;" class="contrast">
+        <aside class="notes">
+          - dramatic end at the close of last century (1998)
+          - Netscape conceded they couldn't compete with MS's tactics and allowed themselves to be sold 
+          to AOL
+        </aside>
+      </section>
+
+      <section data-background-image="images/court-case-cover.jpg" data-background-size="contain">
+        <aside class="notes">
+          Microsoft embroiled in antitrust cases with both US and EU government.
+          Central argument - anti-competitive practices destroyed Netscape 
+          MS lost both cases, but the consequences for them were pretty minimal.
+        </aside>
+      </section>
+
+      <section class="center">
+        <h2>After the war</h2>
+        <aside class="notes">
+          At this point, MS had ~95% browser market share (most Windows and Apple users)
+          No serious competition on Windows (Opera, Netscape Communicator & spin-offs - Netscape 
+          browsers didn't just die + open sourced before sale to AOL)
+          mid 90s - most people were trying browsers for the first time, so just getting in front of them 
+          was enough to convince them yours was best 
+          late 90s/early 2000s - people were already familiar with a browser and getting them to switch 
+          was tricky
+          plus corporations bought into IE windows integrations and couldn't change
+          So browser innovation... stopped
+        </aside>
+      </section>
+
+      <section class="center">
+        <img src="images/ie6.jpg">
+        <aside class="notes">
+            - for comparison, between 1995 and 1999, MS released 5 versions of IE
+            - IE 6 released in 2001
+            - IE 7 released 2006
+            
+            standards also stalled, although a lot of work was done, just not many standards produced
+        </aside>
+      </section>
+
+      <section data-background-image="images/js-logo.jpg" data-background-size="50%">
+        <aside class="notes">
+          rise in popularity of JS - esp ajax - tc39 got super excited
+          js was going to be the language to do everything for everyone
+          started work on es4 after es3 released in 1999 
+          never got anywhere. too much in the spec. yahoo & ms refused to play 
+          ball - possibly for perfectly good reasons
+          arguments continued until 2008!
+          2008 - decision to work on es3.1, released as ES5 in 2009. 10 years!
+        </aside>
+      </section>
+
+      <section data-background-image="images/CSS3.png" data-background-size="40%">
+        <aside class="notes">
+          CSS2 - published as recommendation in 1998
+          CSS2.1 struggled through the standards process 
+            candidate recommendation 2004
+            working draft 2005
+            candidate recommendation 2007
+            working draft 2010
+            w3c recommendation 2011
+            secondary features held back publication of entire specification
+          CSS3 - avoided this problem by splitting into modules
+           still took from 1999 to 2011 to publish a recommendation though
+        </aside>
+      </section>
+
+      <section data-background-image="images/html5-logo.png" data-background-size="55%">
+        <aside class="notes">
+          HTML might have had the roughest road - 15 years between HTML 4.01 in 2000 
+          HTML 5 in 2014
+          (first published 2008, major update + w3c recommendation status 2014)
+          - added the new audio element that was so dreaded by the early web
+        </aside>
+      </section>
+
+      <section class="center vertical">
+        <h2>The return of standards</h2>
+        <h2>(and the arrival of modern browsers)</h2>
+        <aside class="notes">
+          through all the dark days of IE6, there was one shining light of hope
+          before being bought by AOL, Netscape open sourced their code & created the 
+          Mozilla Organization
+        </aside>
+      </section>
+
+      <section data-background-image="images/mozilla_suite.png" data-background-size="contain">
+        <aside class="notes">
+          working with funding from Netscape/AOL released Mozilla Application Suite
+          better, faster, more standards compliant
+          some people wanted a stand-alone browser though
+        </aside>        
+      </section>
+
+      <section data-background-image="images/Mozilla_Phoenix_logo_vector.svg" data-background-size="80%">
+        <aside class="notes">
+          forked Mozilla suite browser to create new Phoenix browser
+        </aside>
+      </section>
+
+      <section class="center">
+        <img src="images/phoenix-logo.png" class="contrast" style="width: 50vw; align-self: center">
+        <aside class="notes">
+          BIOS manufacturer Phoenix technologies wasn't impressed
+        </aside>
+      </section>
+
+      <section data-background-image="images/Mozilla_Phoenix_logo_vector.svg" data-background-size="80%">
+        <aside class="notes">
+          changed the name to firebird
+          already firebird database, so they gave up on the whole phoenix theme 
+        </aside>
+      </section>
+
+      <section data-background-image="images/firefox-logo.png" data-background-size="20%">
+        <aside class="notes">
+            Firefox 1.0 - 2004
+        </aside>
+      </section>
+
+      <section data-background-image="images/Safari_browser_logo.svg" data-background-size="20%">
+        <aside class="notes">
+          around this time, Apple released Safari - based on khtml NOT mosaic
+          it's a bit shit now, but made a decent stab at standards compliance back in the day
+          first browser to pass the ACID 2 test for HTML, CSS2.1, PNG images and data URIs
+          not huge share on desktop, but iphone etc
+
+          took a chunk out of IE's market share 
+          firefox also continued eating away at IE's market share reaching > 30% by 2009 - more 
+          popular than IE7 - before once again declining
+
+          what brought about the decline of firefox?
+        </aside>
+      </section>
+
+      <section data-background-image="images/chrome-logo.svg" data-background-size="20%">
+        <aside class="notes">
+          released 2008, pretty standards compliant
+        </aside>
+      </section>
+
+      <section data-background-image="images/Microsoft_Edge_logo.svg" data-background-size="20%">
+        <aside class="notes">
+          and, of course, MS released edge in 2015 to replace the now-decrepit IE line of browsers
+          Edge is pretty standards-compliant - more so once it adopts chromium engine but 
+          it's never been particularly popular, I'm just including it for completeness
+        </aside>
+      </section>
+
+      <section class="center center-align" data-transition="fade">
+        <img src="images/Opera_2015_icon.svg" style="width: 20%; margin-right: 10px;">
+        <img src="images/UC_Browser_Logo.png" style="width: 20%; margin-right: 30px;">
+        <img src="images/Samsung_Internet_Logo.png" style="width: 20%">
+        <aside class="notes">
+          - missed a heap of browsers - notably opera - not much impact in the desktop space, huge in 
+          embedded devices and low end mobile phones
+          - also UC browser - big in China & samsung internet obvs on phones
+          - most browsers these days are based on existing browsers (usually chrome), so not much difference
+          in standards compliance
+        </aside>
+      </section>
+
+      <section class="center">
+        <h2>What's in a browser?</h2>
+        <aside class="notes">
+          so that's how we got here
+          but what's actually in a browser? 
+          kind of implied we were going to look at netscape 
+          we're not. we're going to look at what the standards say
+        </aside>
+      </section>
+
+      <section data-background-image="images/Browser.png" data-background-size="contain">
+        <aside class="notes">
+          - here is my very standards compliant browser
+          - it's got a bunch of stuff you can't see - networking, disk access etc 
+          - the same as for any other app - not really browser specific  
+        </aside>
+      </section>
+
+      <section data-background-image="images/Chrome.png" data-background-size="contain">
+        <aside class="notes">
+          - at the top level, the browser is kind of two bits
+          - the browser chrome
+        </aside>
+      </section>
+
+      <section data-background-image="images/Not-chrome.png" data-background-size="contain">
+        <aside class="notes">
+          - and the bit that displays the web-page - the browser engine
+          - chrome and engine can be mixed and matched    
+        </aside>
+      </section>
+
+      <section class="center">
+        <div class="browsers-and-engines">
+          <img src="images/firefox-logo.png" class="fragment">
+          <img src="images/Mozillagecko-logo.svg" class="fragment">
+          <img src="images/Safari_browser_logo.svg" class="fragment">
+          <img src="images/WebKit_logo.svg" class="fragment">
+          <img src="images/chrome-logo.svg" class="fragment">
+          <div class="fragment"><code>&lt;blink&gt;</code></div>
+          <img src="images/Chromium_Icon.png" class="fragment">
+          <div class="fragment"><code>&lt;blink&gt;</code></div>
+          <img src="images/Microsoft_Edge_logo.svg" class="fragment">
+          <div class="fragment"><code>&lt;blink&gt;</code></div>
+        </div>
+        <aside class="notes">
+          open source vs proprietary 
+          webkit = fork of khtml
+          blink = fork of webkit - apparently google didn't have time to design a logo for it
+          edge - edgeHTML, which also doesn't have a logo, but it doesn't matter because blink
+
+          at least, that's how it is on desktop and android
+        </aside>
+      </section>
+
+      <section class="center">
+        <div class="browsers-and-engines">
+          <img src="images/firefox-logo.png">
+          <img src="images/WebKit_logo.svg">
+          <img src="images/Safari_browser_logo.svg">
+          <img src="images/WebKit_logo.svg">
+          <img src="images/chrome-logo.svg">
+          <img src="images/WebKit_logo.svg">
+          <img src="images/Chromium_Icon.png">
+          <img src="images/WebKit_logo.svg">
+          <img src="images/Microsoft_Edge_logo.svg">
+          <img src="images/WebKit_logo.svg">
+        </div>
+        <aside class="notes">
+          apple policy...
+
+          let's take a look at what goes on in a browser engine
+        </aside>    
+      </section>
+
+      <section class="center">
+        <h2>&lt;html&gt;&lt;/html&gt;</h2>
+        <aside class="notes">
+          at it's heart, a browser engine is responsible for parsing HTML
+        </aside>
+      </section>
+
+      <section class="center" data-transition="fade">
+       <div class="marquee">
+          &lt;!DOCTYPE html&gt;
+          &lt;html&gt;
+          &lt;head&gt;
+            &lt;meta charset="utf-8" /&gt;
+            &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+            &lt;title&gt;Autopsy of a browser&lt;/title&gt;
+            &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+          
+            &lt;link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet"&gt;
+            &lt;link rel="stylesheet" href="reveal/reveal.css"&gt;
+            &lt;script src="reveal/reveal.js"&gt;&lt;/script&gt;
+          
+            &lt;link rel="stylesheet" href="slides2.css"&gt;
+            &lt;link rel="stylesheet" href="zenburn.css"&gt;
+          &lt;/head&gt;
+          
+          &lt;body&gt;
+            &lt;div class="reveal"&gt;            
+        </div>
+        <aside class="notes">
+          HTML from network as a stream of characters
+          *** extra if needed - charsets and encoding ***
+          browser needs to turn it into something it can understand
+        </aside>
+      </section>
+
+      <section class="center">
+        <h2>HTML Tokenisation</h2>
+        <aside class="notes">
+          - break stream into tokens, which are like words
+        </aside>
+      </section>
+
+      <section>
+          <dl>
+            <dt class="fragment">start tags</dt>
+            <dd>
+              <div class="fragment">&lt;h1&gt;</div>
+              <div class="fragment">&lt;label for="name"&gt;</div>
+              <div class="fragment">&lt;input id="name" /&gt;</div>
+            </dd>
+            <dt class="fragment">end tags</dt>
+            <dd class="fragment">&lt;/h1&gt;, &lt;/label&gt;</dd>
+            <dt class="fragment">text</dt>
+            <dd class="fragment">Please enter your name</dd>
+            <dt class="fragment">comment</dt>
+            <dd class="fragment">&lt;!-- start of form --&gt;</dd>
+          </dl>
+          <aside class="notes">
+            and a couple of others like doctype and end of file
+          </aside>
+        </section>  
+
+      <section class="center center-align vertical fsm-explanation">
+        <div class="input fragment highlight-green"></div>
+        <div class="state" style="transform: translateX(-50px)">A</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 180" style="transform: translate(138px, -53px)">
+          <!-- <line x1="50" y1="50" x2="200" y2="50" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />   -->
+          <path d="M 53, 51 C 147, 25, 191, 67, 193, 130" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />
+        </svg>
+        <div class="state">B</div>
+        <div class="state">C</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+          <defs>
+            <marker id="startarrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+              <polygon points="10 0, 10 7, 0 3.5" />
+            </marker>
+            <marker id="endarrow" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                <polygon points="0 0, 10 3.5, 0 7" />
+            </marker>
+          </defs>
+        </svg>
+      </section>
+
+      <section class="vertical" data-transition="fade">
+        <div class="fsm">
+          <div class="fsm-input"><span class="first-letter">&lt;</span>label for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+          </div>
+          <div class="fsm-rules fragment">
+            <ul>
+              <li class="fragment highlight-green">"&lt;" => tag open state</li>
+              <li>null => parse error</li>
+              <li>else => emit character token</li>
+            </ul>
+          </div>
+        </div>
+        <aside class="notes">
+          finite state machine - like a flow chart where you get a new input 
+          at every step
+          particularly complicated flow chart - 68 different states
+          my favourite is bogus comment state
+          heaps of different states in tokeniser and parser because HTML is so forgiving
+          all modern browsers support almost any html that's ever been valid, as well as 
+          allowing for a bunch of stuff that's not valid 
+        </aside>
+      </section>
+
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment" data-fragment-index="2">l</div>
+        <div class="fsm">
+          <div class="fsm-input">label for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div>    
+          </div>
+          <div class="fsm-rules fragment" data-fragment-index="0">
+            <ul>
+              <li>solidus (/) => end tag open state</li>
+              <li class="fragment highlight-green" data-fragment-index="1">[a-zA-Z] => create new start tag token, set name to current character => tag name state</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment highlight-blue" data-fragment-index="2">
+          l<span class="fragment" data-fragment-index="2">a</span>
+        </div>
+        <div class="fsm">
+          <div class="fsm-input">abel for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div>   
+          </div>
+          <div class="fsm-rules fragment" data-fragment-index="0">
+            <ul style="font-size: .85em">
+              <li>space character => before attribute name state</li>
+              <li>solidus => self-closing start tag state</li>
+              <li>"&gt;" => emit current tag token => data state</li>
+              <li class="fragment highlight-green" data-fragment-index="1">
+                else => append current character to tag token name
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+  
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment highlight-blue" data-fragment-index="2">
+          la<span class="fragment" data-fragment-index="2">b</span>
+        </div>
+        <div class="fsm">
+          <div class="fsm-input">bel for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div>   
+          </div>
+        </div>
+      </section>
+
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment highlight-blue" data-fragment-index="2">
+          lab<span class="fragment" data-fragment-index="2">e</span>
+        </div>
+        <div class="fsm">
+          <div class="fsm-input">el for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div>   
+          </div>
+        </div>
+      </section>
+
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment highlight-blue" data-fragment-index="2">
+          labe<span class="fragment" data-fragment-index="2">l</span>
+        </div>
+        <div class="fsm">
+          <div class="fsm-input">l for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div>   
+          </div>
+        </div>
+      </section>
+  
+      <section class="vertical" data-transition="fade">
+        <div class="token">
+          label
+        </div>
+        <div class="fsm">
+          <div class="fsm-input"><span style="display: inline-block; border: 2px solid var(--pink); width: 1ch; height: 1.2ch; margin-bottom: -3px;"></span>for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div>   
+          </div>
+          <div class="fsm-rules fragment" data-fragment-index="0">
+            <ul style="font-size: .85em">
+              <li class="fragment highlight-green">space character => before attribute name state</li>
+              <li>solidus => self-closing start tag state</li>
+              <li>"&gt;" => emit current tag token => data state</li>
+              <li>else => append current character to tag token name</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+  
+      <section class="vertical" data-transition="fade">
+        <div class="token fragment highlight-blue" data-fragment-index="2">
+          <div>label</div>
+          <div class="fragment" data-fragment-index="2">[f=""]</div>
+        </div>
+        <div class="fsm">
+          <div class="fsm-input">for="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+          <div class="fsm-states">
+            <div class="fsm-state">data</div>
+            <div class="fsm-state">tag open</div> 
+            <div class="fsm-state">tag name</div> 
+            <div class="fsm-state">before attribute name</div>  
+          </div>
+          <div class="fsm-rules fragment" data-fragment-index="0">
+            <ul>
+              <li>solidus => self-closing start tag state</li>
+              <li>"&gt;" => emit token => data state</li>
+              <li class="fragment highlight-green" data-fragment-index="1">[a-zA-Z] => create attribute, [character: ""] => attribute name state</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[f<span class="fragment" data-fragment-index="2">o</span>=""]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">or="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+        </div>
+        <div class="fsm-rules fragment" data-fragment-index="0">
+          <ul style="font-size: .85em">
+            <li>space => after attribute name state</li>
+            <li>solidus => self-closing start tag state</li>
+            <li>"=" => before attribute value state</li>
+            <li>">" => emit token => data state</li>
+            <li class="fragment highlight-green" data-fragment-index="1">else => append current character to attribute name</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[fo<span class="fragment" data-fragment-index="2">r</span>=""]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">r="name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+        </div>
+      </div>
+    </section>
+  
+    <section class="vertical" data-transition="fade">
+      <div class="token">
+        <div>label</div>
+        <div>[for=""]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input"><span class="first-letter">=</span>"name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+        </div>
+      </div>
+      <div class="fsm-rules fragment" data-fragment-index="0">
+        <ul>
+          <li>space => after attribute name state</li>
+          <li>solidus => self-closing start tag state</li>
+          <li class="fragment highlight-green" data-fragment-index="1">"=" => before attribute value state</li>
+          <li>">" => emit token => data state</li>
+          <li>else => append current character to attribute name</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token">
+        <div>label</div>
+        <div>[for=""]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input"><span class="first-letter">"</span>name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+        </div>
+      </div>
+      <div class="fsm-rules fragment" data-fragment-index="0">
+        <ul>
+          <li>' => attribute value (single-quoted) state</li>
+          <li class="fragment highlight-green">" => attribute value (double-quoted) state</li>
+          <li>">" => parse error, emit token => data state</li>
+          <li>else => append to value => attribute value (unquoted) state</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[for="<span class="fragment" data-fragment-index="2">n</span>"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">name"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+        </div>
+      </div>
+      <div class="fsm-rules fragment" data-fragment-index="0">
+        <ul style="font-size: 42px">
+          <li>" => after attribute value (quoted) state</li>
+          <li>& => character reference in attribute value state</li>
+          <li class="fragment highlight-green" data-fragment-index="1">else => add current character to value</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[for="n<span class="fragment" data-fragment-index="2">a</span>"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">ame"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[for="na<span class="fragment" data-fragment-index="2">m</span>"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">me"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-blue" data-fragment-index="2">
+        <div>label</div>
+        <div>[for="nam<span class="fragment" data-fragment-index="2">e</span>"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input">e"&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token">
+        <div>label</div>
+        <div>[for="name"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input"><span class="first-letter">"</span>&gt;Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+        </div>
+      </div>
+      <div class="fsm-rules fragment" data-fragment-index="0">
+        <ul>
+          <li class="fragment highlight-green">" => after attribute value (quoted) state</li>
+          <li>& => character reference in attribute value state</li>
+          <li>else => add current character to value</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="vertical" data-transition="fade">
+      <div class="token fragment highlight-green" data-fragment-index="2">
+        <div>label</div>
+        <div>[for="name"]</div>
+      </div>
+      <div class="fsm">
+        <div class="fsm-input"><span class="first-letter">&gt;</span>Name&lt;/label&gt;&lt;input id="name" /&gt;</div>
+        <div class="fsm-states">
+          <div class="fsm-state">data</div>
+          <div class="fsm-state">tag open</div> 
+          <div class="fsm-state">tag name</div> 
+          <div class="fsm-state">before attribute name</div>
+          <div class="fsm-state">attribute name</div>
+          <div class="fsm-state">before attribute value</div>
+          <div class="fsm-state">attribute value (double-quoted)</div>
+          <div class="fsm-state">after attribute value (quoted)</div>
+        </div>
+      </div>
+      <div class="fsm-rules fragment" data-fragment-index="0">
+        <ul>
+          <li>space => before attribute name state</li>
+          <li>solidus => self-closing start tag state</li>
+          <li class="fragment highlight-green" data-fragment-index="1">">" => emit the token => data state</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="token token-inline">
+        <div>label</div>
+        <div>[for="name"]</div>
+        <div>type=start tag</div>
+      </div>
+      <div class="token token-inline">
+        <div>N</div>
+        <div>type=character</div>
+      </div>
+      <div class="token token-inline">
+        <div>a</div>
+        <div>type=character</div>
+      </div>
+      <div class="token token-inline">
+        <div>m</div>
+        <div>type=character</div>
+      </div>
+      <div class="token token-inline">
+        <div>e</div>
+        <div>type=character</div>
+      </div>
+      <div class="token token-inline">
+        <div>label</div>
+        <div>type=end tag</div>
+      </div>
+      <div class="token token-inline">
+        <div>input</div>
+        <div>[id="name"]</div>
+        <div>type=start tag</div>
+        <div>self-closing=true</div>
+      </div>
+      <aside class="notes">
+        What happens to all these tokens?
+        As each token is produced, it is passed to the parser
+      </aside>
+    </section>
+
+    <section class="center">
+      <h2>HTML parsing</h2>
+    </section>
+
+    <section class="center">
+      HTML tokens => Document Object Model 
+      <aside class="notes">
+        HTML parser - also a finite state machine, runs simulatneously with tokeniser 
+        As each token is emitted by tokeniser, consumed by parser
+        Constructs in-memory representation of document - objects implementing HTMLElement 
+        form the nodes of a tree-structure
+        (DOM doesn't have to be a tree - IE - but trees are more usual)
+        hugely complicated by allowances for mal-formed HTML - retroactively insert 
+        missing parent nodes and closing tags - but let's just concentrate on the simple 
+        case
+        maybe a picture of a superhero?
+      </aside>
+    </section>
+
+    <section>
+      <pre><code>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+    &lt;script src="app.js"&gt;&lt;/script&gt;
+  &lt;/head&gt; 
+  &lt;body&gt; 
+    &lt;article&gt; 
+      &lt;h1&gt;Cats&lt;/h1&gt;
+      &lt;img src="cat.webp" /&gt;
+      &lt;p&gt;cheezburger&lt;/p&gt;
+    &lt;/article&gt; 
+  &lt;/body&gt;
+&lt;/html&gt;
+      </pre></code>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>doctype</div>
+        <div>[name=html]</div>
+      </div>
+      <ul class="tree">
+        <li class="fragment">doctype html</li>
+      </ul>
+      <ul class="open-stack"></ul>
+      <aside class="notes">
+        holdover from HTML4, which tried to really regularise HTML
+        sets the strictness of the parser
+      </aside>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        open tag: html
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li class="fragment">html</li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        open tag: head
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul class="fragment">
+            <li>head</li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">head</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>open tag: link</div>
+        <div>[rel="stylesheet"]</div>
+        <div>[href="styles.css"]</div>
+        <div>selfClosing=true</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul class="fragment">
+                <li>style</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li>head</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>open tag: script</div>
+        <div>[src="app.js"]</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li class="fragment">script</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">script</li>
+        <li>head</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: script</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li class="fragment highlight-red" data-fragment-index="1">script</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out" data-fragment-index="0">script</li>
+        <li>head</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="center vertical" data-transition="fade">
+      <div style="font-size: 48px; align-self: center">document.write();</div>
+      <div style="font-size: 48px; align-self: center" class="fragment">&lt;script src="main.js" <span class="highlight">async</span> &gt;&lt;/script&gt;</div>
+      <div style="font-size: 48px; align-self: center" class="fragment">&lt;script src="main.js" <span class="highlight">defer</span> &gt;&lt;/script&gt;</div>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: head</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out">head</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>opening tag: body</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li class="fragment">body</li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>opening tag: article</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li class="fragment">article</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>opening tag: h1</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul class="fragment">
+                    <li>h1</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">h1</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="multi-token">
+        <div class="token">C</div>
+        <div class="token">a</div>
+        <div class="token">t</div>
+        <div class="token">s</div>      
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul class="fragment">
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li>h1</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        closing tag: h1
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out">h1</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>opening tag: img</div>
+        <div>[src="cats.webp"]</div>
+        <div>selfClosing = true</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li class="fragment">img</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>opening tag: p</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li>
+          <span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li class="fragment">p</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment">p</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+  
+    <section class="html-parser" data-transition="fade">
+      <div class="multi-token squishy">
+        <div class="token">c</div>
+        <div class="token">h</div>
+        <div class="token">e</div>
+        <div class="token">e</div>
+        <div class="token">z</div>
+        <div class="token">b</div>
+        <div class="token">u</div>
+        <div class="token">r</div>
+        <div class="token">g</div>
+        <div class="token">e</div>
+        <div class="token">r</div>
+      </div>
+                                                                                                              
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li class="fragment">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li>p</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: p</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li>text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out">p</li>
+        <li>article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: article</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li>text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out">article</li>
+        <li>body</li>
+        <li>html</li>
+      </ul>
+    </section>
+    
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: body</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li>text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="open-stack">
+        <li class="fragment fade-out">body</li>
+        <li>html</li>
+      </ul>
+    </section>
+      
+    <section class="html-parser" data-transition="fade">
+      <div class="token">
+        <div>closing tag: html</div>
+      </div>
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li>text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>    
+      <ul class="open-stack">
+        <li class="fragment fade-out">html</li>
+      </ul>
+    </section>
+
+    <section class="center" data-transition="fade">
+      <ul class="tree">
+        <li>doctype html</li>
+        <li><span>html</span>
+          <ul>
+            <li><span>head</span>
+              <ul>
+                <li>style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li>cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <aside class="notes">
+        before we can show anything on the page though, we need to 
+        process any CSS on the page
+      </aside> 
+    </section>
+    
+    <section class="center">
+      <h2>CSS tokenisation & parsing</h2>
+      <aside class="notes">
+        Actually happens along with HTML parsing - HTML parser hands over to CSS parser
+      </aside>
+    </section>
+
+    <section class="center vertical">
+      <h2 class="fragment">&lt;link rel="stylesheet" ...&gt;</h2>
+      <h2 class="fragment">&lt;style&gt;&lt;/style&gt;</h2>
+      <h2 class="fragment">style="...."</h2>
+      <aside class="notes">
+        Works similar to HTML tokenisation and parsing, but the CSS 
+        parser has a few additional concerns to worry about
+      </aside>
+    </section>
+
+    <section class="center">
+      <h2>The Cascade</h2>
+    </section>
+
+    <section class="center vertical center-align css-origin">
+      <div class="fragment" data-fragment-index="4">user styles</div>
+      <div class="fragment" data-fragment-index="3">inline-styles</div>
+      <div class="fragment" data-fragment-index="2">style elements</div>
+      <div class="fragment" data-fragment-index="1">external stylesheets</div>
+      <div class="fragment" data-fragment-index="0">user-agent</div>
+      <aside class="notes">
+        goes back to original browser creators' beliefs that it should be up to the 
+        user to decide how a page should look
+      </aside>
+    </section>
+
+    <section class="center">
+      <h2>Specificity</h2>
+    </section>
+
+    <section class="vertical">
+      <div>&lt;h2 class="green" id="pink"&gt;
+      <span style="--light-blue: var(--orange)" class="fragment highlight-blue" data-fragment-index="1">
+        <span class="fragment highlight-green" data-fragment-index="3">
+          <span class="fragment highlight-red" data-fragment-index="5">
+            What colour am I?
+          </span>
+        </span>
+      </span>
+      &lt;/h2&gt;</div>
+      <pre class="fragment" data-fragment-index="0"><code>h2 {
+  color: orange;
+}</code></pre>
+      <pre class="fragment" data-fragment-index="2"><code>.green {
+  color: green;
+}</code></pre>
+      <pre class="fragment" data-fragment-index="4"><code>#pink {
+  color: pink;
+}</code></pre>
+    </section>
+
+    <section class="vertical">
+      <div>&lt;h2 class="green" id="pink"&gt;
+        <span class="fragment highlight-red" data-fragment-index="5">
+            What colour am I?
+        </span>
+      &lt;/h2&gt;</div>
+      <pre><code>#pink {
+  color: pink;
+}</code></pre>
+<pre><code>.green {
+  color: green;
+}</code></pre>          
+      <pre><code>h2 {
+  color: orange;
+}</code></pre>
+    </section>
+  
+    <section class="center">
+      <h2>Shorthand Properties</h2>
+    </section>
+
+    <section class="center vertical">
+      <code style="border: 8px ridge; padding: 1em; margin-left: 200px; width: 400px"><span class="fragment">border: 8px ridge</span></code>
+      <div class="fragment" style="margin-top: 4em; margin-left: 240px">
+        <div>border-left-width: 8px</div>
+        <div>border-right-width: 8px</div>
+        <div>border-top-width: 8px</div>
+        <div>border-bottom-width: 8px</div>
+        <div>border-left-style: ridge</div>
+        <div>border-right-style: ridge</div>
+        <div>border-top-style: ridge</div>
+        <div>border-bottom-style: ridge</div>
+      </div>
+    </section>
+
+    <section class="center">
+      <h2>Units</h2>
+    </section>
+
+    <section>
+      <div style="font-size: 64px; margin: auto; width: 66%; word-spacing: 1.25em; text-align: center">
+        cap ch em ex ic lh rem rlh vh vw vi vb vmin vmax 
+        <span class="fragment highlight-green" data-fragment-index="0">px</span> 
+        cm mm Q in pc pt <span class="fragment highlight-green" data-fragment-index="0">%</span>
+      </div>
+    </section>
+
+    <section>
+      <table class="parsed-css">
+        <thead>
+          <th>Origin</th>
+          <th>Selector</th>
+          <th>Property</th>
+          <th>Value</th>
+          <th>Specificity</th>
+          <th>Order</th>
+        </thead>
+        <tr><td>User</td>   <td>*</td>                  <td>font-size</td>        <td>32px</td>           <td>0 0 0 0 1</td> <td>0</td></tr>
+        <tr><td>Author</td> <td>td .fancy-button</td>	<td>background-color</td>	<td>rgb(255,255,0)</td>	<td>0 0 0 1 1</td> <td>5</td></tr>
+        <tr><td>Author</td>	<td>.fancy-button</td>	    <td>background-color</td>	<td>rgb(0,255,0)</td>	  <td>0 0 0 1 0</td> <td>0</td></tr>
+        <tr><td>Author</td>	<td>.fancy-button</td>	    <td>border-width</td>	    <td>3px</td>	          <td>0 0 0 1 0</td> <td>1</td></tr>
+        <tr><td>Author</td>	<td>.fancy-button</td>	    <td>border-style</td>	    <td>solid</td>	        <td>0 0 0 1 0</td> <td>2</td></tr>
+        <tr><td>Author</td>	<td>.fancy-button</td>	    <td>border-color</td>	    <td>rgb(255,0,0)</td>	  <td>0 0 0 1 0</td> <td>3</td></tr>
+        <tr><td>Author</td>	<td>.fancy-button</td>	    <td>font-size</td>	      <td>16px</td>	          <td>0 0 0 1 0</td> <td>4</td></tr>
+      </table>
+      <div class="footnote">https://alistapart.com/article/braces-to-pixels</div>
+    </section>
+
+    <section data-background-image="images/captain-planet.jpg" data-background-size="cover">
+      <aside class="notes">
+        need to combine DOM and CSSOM
+      </aside>
+    </section>
+
+    <section data-transition="fade">
+      <ul class="tree small">
+        <li class="fragment fade-out" data-fragment-index="1">
+          <span class="fragment highlight-red" data-fragment-index="0"> 
+            doctype html
+          </span>
+        </li>
+        <li>
+          <span class="fragment highlight-red" data-fragment-index="2">
+            <span class="fragment highlight-blue" data-fragment-index="4">html</span>
+          </span>
+          <ul>
+            <li>
+              <span class="fragment highlight-red" data-fragment-index="4">
+                <span class="fragment highlight-blue" data-fragment-index="7">head</span>
+              </span>
+              <ul>
+                <li class="fragment highlight-red" data-fragment-index="8">style</li>
+                <li>script</li>
+              </ul>
+            </li>
+            <li><span>body</span>
+              <ul>
+                <li><span>article</span>
+                  <ul>
+                    <li><span>h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li>img</li>
+                    <li><span>p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    
+      <div class="fake-css"></div>
+      <span class="fragment highlight-blue" data-fragment-index="4">
+        <svg data-fragment-index="3" class="arrow fragment html" width="100" height="100" style="top: 150px; left: 200px; transform: scale(3.4, 2.2)" >
+            <path d="M0 0 Q 55 10 100 100" />
+        </svg>
+      </span>
+      <span class="fragment highlight-blue" data-fragment-index="7">
+        <svg data-fragment-index="6" class="arrow fragment head" width="100" height="100" style="top: 185px; left: 230px; transform: scale(3.1, 1.5)" >
+            <path d="M0 0 Q 55 10 100 100" />
+        </svg>
+      </span>
+      <svg class="arrow fragment" width="100" height="100" style="top: 225px; left: 235px; transform: scale(3, 1.1)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+    </section>
+  
+    <section data-transition="fade" data-autoslide="500">
+      <ul class="tree small">
+        <li style="opacity: 0">doctype html</li>
+        <li><span class="highlight-blue">html</span>
+          <ul>
+            <li><span class="highlight-blue">head</span>
+              <ul>
+                <li class="highlight-blue">style</li>
+                <li class="highlight-blue">script</li>
+              </ul>
+            </li>
+            <li><span class="highlight-blue">body</span>
+              <ul>
+                <li><span class="highlight-blue">article</span>
+                  <ul>
+                    <li><span class="highlight-blue">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li class="highlight-blue">img</li>
+                    <li><span class="highlight-blue">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+  
+      <div class="fake-css"></div>
+      <svg class="arrow done html" width="100" height="100" style="top: 150px; left: 180px; transform: scale(3.6, 2.2)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow done head" width="100" height="100" style="top: 190px; left: 210px; transform: scale(3.3, 1.5)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow style done" width="100" height="100" style="top: 225px; left: 235px; transform: scale(3, 1.1)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow script fragment done" width="100" height="100" style="top: 260px; left: 245px; transform: scale(2.9, 1.1)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow body fragment done" width="100" height="100" style="top: 294px; left: 208px; transform: scale(2.45, 2) rotate(-.08turn)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow body fragment done" width="100" height="100" style="top: 296px; left: 208px; transform: scale(2.4, 2.6) rotate(-.16turn)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow article fragment done" width="100" height="100" style="top: 330px; left: 252px; transform: scale(2.1, 2) rotate(-.1turn)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow article fragment done" width="100" height="100" style="top: 328px; left: 252px; transform: scale(2.1, 2.6) rotate(-.16turn)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow h1 fragment done" width="100" height="100" style="top: 370px; left: 240px; transform: scale(2.18, 2.2) rotate(-.16turn)" >
+          <path d="M0 0 Q 55 10 100 100" />
+      </svg>
+      <svg class="arrow h1 fragment done" width="100" height="100" style="top: 374px; left: 238px; transform: scale(2.27, 2) rotate(-.18turn)" >
+          <path d="M0 0 Q 55 90 100 100" />
+      </svg>
+      <svg class="arrow img fragment done" width="100" height="100" style="top: 442px; left: 250px; transform: scale(2.9, 2.6) rotate(-.25turn)" >
+          <path d="M0 0 C 40 75 98 30 100 100" />
+      </svg>
+      <svg class="arrow p fragment done" width="100" height="100" style="top: 484px; left: 230px; transform: scale(2.75, 4) rotate(-.23turn);" >
+          <path style="stroke-width: 1px" d="M0 0 C 40 75 90 30 100 100" />
+      </svg>
+      <p class="fragment" data-autoslide="1000000"></p>
+    </section>
+  
+    <section class="center">
+      <h2>Layout</h2>
+    </section>
+
+    <section>
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 fragment highlight-red" data-fragment-index="0">html</span>
+          <ul>
+            <li>
+              <span class="style-1">head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+      </div>  
+    </section>
+
+    <section class="center">
+      <pre style="font-size: 2em"><code class="css">display: block;
+width: 100%;
+height: 100%;</code></pre>
+    </section>
+
+    <section>
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-red visible" data-fragment-index="0">
+            <span class="fragment highlight-blue" data-fragment-index="2">html</span>
+          </span>
+          <ul>
+            <li>
+              <span class="style-1 fragment highlight-red" data-fragment-index="2">head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html fragment" data-fragment-index="1"></div>
+      </div>  
+    </section>
+
+    <section class="center">
+      <pre style="font-size: 2em;"><code class="css">display: none;</code></pre>
+    </section>
+
+    <section>
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li class="fragment fade-out" data-fragment-index="1">
+              <span class="style-1 highlight-red visible" data-fragment-index="0">head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style fragment highlight-red" data-fragment-index="2">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html"></div>
+      </div>  
+    </section>
+
+    <section class="center">
+      <pre style="font-size: 1.5em;"><code class="css" data-noescape>margin: 0;
+display: block;
+width: 100%;
+height: 100%;
+<span style="text-decoration: line-through;">margin: 8px;</span></code></pre>
+    </section>
+  
+    <section>
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-red visible">
+                <span class="fragment highlight-blue" data-fragment-index="1">body</span>
+              </span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 fragment highlight-red">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body fragment" data-fragment-index="0"></div>
+        </div>
+      </div>  
+    </section>
+    
+    <section class="center">
+      <pre style="font-size: 1.5em;"><code class="css" data-noescape>display: block;
+margin: 30px;
+width: 100%;
+height: auto;</code></pre>
+    </section>
+
+    <section>
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-red visible">
+                    <span class="fragment highlight-blue" data-fragment-index="1">
+                      article
+                    </span>
+                  </span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 fragment highlight-red" data-fragment-index="2">h1</span>
+                      <ul>
+                        <li>text: Cats</li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article fragment" data-fragment-index="0"></div>
+          </div>
+        </div>
+      </div>  
+    </section>
+  
+    <section class="center">
+      <pre style="font-size: 1.5em;"><code class="css" data-noescape>display: block;
+margin-top: 12px;
+margin-bottom: 12px;
+margin-left: 0;
+margin-right: 0;
+width: 100%;
+height: auto;</code></pre>
+    </section>
+  
+    <section data-transition="fade">
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-blue">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 highlight-red visible">
+                        <span class="fragment highlight-blue" data-fragment-index="1">
+                          <span class="fragment highlight-red" data-fragment-index="3">h1</span>
+                        </span>
+                      </span>
+                      <ul>
+                        <li>
+                          <span class="fragment highlight-red" data-fragment-index="1">
+                            <span class="fragment highlight-blue" data-fragment-index="3">text: Cats</span>
+                          </span>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 fragment invisible" data-fragment-index="0" style="position: relative">
+                <div class="fragment invisible" data-fragment-index="2" style="position: absolute; top: -8px; left: 0;">
+                  Cats
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+    
+    <section data-transition="fade">
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-blue">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 highlight-red visible">
+                        <span class="fragment highlight-blue">h1</span>
+                      </span>
+                      <ul>
+                        <li><span class="highlight-blue">text: Cats</span></li>
+                      </ul>
+                    </li>
+                    <li><span class="user-style style-2 fragment highlight-red">img</span></li>
+                    <li>
+                      <span class="user-style style-2">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 visible">Cats</div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+
+    <section class="center">
+      <pre><code class="css">display: inline;
+width: 200px;
+height: 200px;</code></pre>
+    </section>
+
+    <section data-transition="fade">
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-blue">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 highlight-blue">h1</span>
+                      <ul>
+                        <li><span class="highlight-blue">text: Cats</span></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <span class="user-style style-2 highlight-red visible">
+                        <span class="fragment highlight-blue" data-fragment-index="1">img</span> 
+                      </span></li>
+                    <li>
+                      <span class="user-style style-2 fragment highlight-red" data-fragment-index="1">p</span>
+                      <ul>
+                        <li style="width: 18ch">text: cheezburger</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 visible">Cats</div>
+              <div class="img fragment invisible" data-fragment-index="0"></div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+
+    <section class="center">
+      <pre><code class="css">display: block;
+margin-top: 16px;
+margin-bottom: 16px;
+width: 100%;
+height: auto;</code></pre>
+    </section>
+  
+    <section data-transition="fade">
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-blue">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 highlight-blue">h1</span>
+                      <ul>
+                        <li><span class="highlight-blue">text: Cats</span></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <span class="user-style style-2 highlight-blue">img</span> 
+                    </li>
+                    <li>
+                      <span class="user-style style-2 highlight-red visible">
+                        <span class="fragment highlight-blue" data-fragment-index="1">
+                          <span class="fragment highlight-red" data-fragment-index="3">p</span>
+                        </span>
+                      </span>
+                      <ul>
+                        <li style="width: 18ch">
+                          <span class="fragment highlight-red" data-fragment-index="1">
+                            <span class="fragment highlight-blue" data-fragment-index="3">
+                                text: cheezburger
+                            </span>
+                          </span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 visible">Cats</div>
+              <div class="img"></div>
+              <div class="article p fragment invisible" data-fragment-index="0">
+                <div class="fragment invisible" data-fragment-index="2" style="position: absolute; top: -8px">cheezburger</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+    
+    <section data-transition="fade">
+      <ul class="tree small with-styles">
+        <li>
+          <span class="style-1 highlight-blue">html</span>
+          <ul>
+            <li style="opacity: 0">
+              <span>head</span>
+              <ul>
+                <li class="style-none">style</li>
+                <li class="style-none">script</li>
+              </ul>
+            </li>
+            <li>
+              <span class="style-1 user-style highlight-blue">body</span>
+              <ul>
+                <li>
+                  <span class="user-style style-2 highlight-blue">article</span>
+                  <ul>
+                    <li>
+                      <span class="user-style style-2 highlight-blue">h1</span>
+                      <ul>
+                        <li><span class="highlight-blue">text: Cats</span></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <span class="user-style style-2 highlight-blue">img</span> 
+                    </li>
+                    <li>
+                      <span class="user-style style-2 highlight-red visible">
+                        p
+                      </span>
+                      <ul>
+                        <li style="width: 18ch">
+                            <span class="highlight-blue">
+                                text: cheezburger
+                            </span>
+                          </span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="layout">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 visible">Cats</div>
+              <div class="img"></div>
+              <div class="article p">
+                <div>cheezburger</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+
+    <section data-transition="fade" class="center">
+      <div class="layout complete">
+        <div class="html">
+          <div class="body">
+            <div class="article">
+              <div class="h1 visible">Cats</div>
+              <div class="img"></div>
+              <div class="article p">
+                <div>cheezburger</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </section>
+  
+    <section class="center">
+      <h2>Painting</h2>
+      <aside class="notes">structure => bitmap ready to paint on screen</aside>
+    </section>
+
+    <section class="center">
+      <ul>
+        <li class="fragment">bottom layer up</li>
+        <li class="fragment">background -> borders -> content</li>
+      </ul>
+    </section>
+
+    <section data-transition="fade" class="center" data-state="painting">
+      <div class="paint">
+        <div class="html done">
+          <div class="body fragment background-slide">
+          </div>
+        </div>
+      </div>  
+    </section>
+
+    <section data-transition="fade" class="center" data-state="painting">
+      <div class="paint">
+        <div class="html done">
+          <div class="body done">
+            <div class="article fragment">
+              <div class="h1 fragment">Cats</div>
+              <div class="img fragment"></div>
+              <div class="p">
+                <div class="fragment">cheezburger</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+      <script>
+        const articleFragment = document.querySelector('.paint .article.fragment');
+        const body = document.querySelector('body')
+        Reveal.addEventListener('painting', () => {
+          const addBorder = (event) => {
+            if (['PageDown', 'ArrowRight'].includes(event.key)) {
+              event.stopPropagation();
+              articleFragment.classList.add('done');
+              console.log('remove')
+              body.removeEventListener('keydown', addBorder);
+            }
+          };
+          
+          const removeBorder = (event) => {
+            if (event.fragment === articleFragment) {
+              articleFragment.classList.remove('done');
+            }
+          };
+
+          Reveal.addEventListener('fragmentshown', (event) => {
+            if (event.fragment === articleFragment) {
+              body.addEventListener('keydown', addBorder);
+            }
+          });
+          Reveal.addEventListener('fragmenthidden', removeBorder);
+        });
+      </script>
+    </section>  
+      
+    <section>
+      <ul>
+        <li class="fragment">Finite state machines are cool</li>
+        <li class="fragment">Browsers are complicated</li>
+        <li class="fragment">Standards are important</li>
+      </ul>
+    </section>
+
+    <section class="center">
+      <h1>Browser diversity is important</h1>
+      <div class="notes">
+        make firefox great again
+      </div>
+    </section>
+
+    <section>
+      <table>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>Chrome</td>
+          <td>61.75%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="2">
+          <td>Safari</td>
+          <td>15.12%</td>
+        </tr>
+        <tr class="fragment highlight-green" data-fragment-index="5">
+          <td>Firefox</td>
+          <td>4.92%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>UC</td>
+          <td>4.22%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>Opera</td>
+          <td>3.15%</td>
+        </tr>
+        <tr class="fragment highlight-blue" data-fragment-index="4">
+          <td>IE</td>
+          <td>2.8%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>Samsung Internet</td>
+          <td>2.74%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>Edge</td>
+          <td>2.15%</td>
+        </tr>
+        <tr class="fragment highlight-red" data-fragment-index="0">
+          <td>AOSP</td>
+          <td>1.18%</td>
+        </tr>
+      </table>
+      <div class="percentage fragment" data-fragment-index="1">
+        75% <span class="fragment" data-fragment-index="3">=> 90%</span>
+      </div>
+      <div class="footnote">
+          http://gs.statcounter.com/ November 2018
+      </div>
+      <div class="notes">
+        98% of browsers
+      </div>
+    </section>
+    <section data-background-image="images/edge-chrome-firefox-safari.png"></section>
+
+    </div>
+  </div>
+  <script src="reveal/head.min.js"></script>
+  <script>
+    Reveal.initialize({
+      controls: false,
+      progress: false,
+      history: true,
+      center: false,
+      display: 'flex',
+      dependencies: [
+        { src: 'reveal/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      ]
+    });
+  </script>  
   <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none">
     <defs>
       <filter id="amoeba">
@@ -30,44 +2892,6 @@
       </filter>
     </defs>
   </svg>
-</head>
-<body>
-  <script>
-    const area = window.innerWidth * window.innerHeight;
-    const numberOfBlobs = area / 10000 * .5;
-    for (let i = 0; i < numberOfBlobs; i++) {
-      const circle = document.createElement('div');
-      circle.classList.add('circle');
-
-      const diameter = Math.random() * 100 + 50;
-      circle.style.width = `${diameter}px`;
-      circle.style.height = `${diameter}px`;
-
-      circle.style.setProperty('--goo-hue', Math.random() * 255);
-
-      const x = Math.random() * (window.innerWidth - diameter);
-      const y = Math.random() * (window.innerHeight - diameter);
-      circle.style.transform = `translate(${x}px, ${y}px)`;
-
-      circle.setDestination = function () {
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        this.style.transform = `translate(${x}px, ${y}px)`;        
-      }
-
-      document.querySelector('body').appendChild(circle);
-
-      requestAnimationFrame(() => {
-        document.querySelectorAll('.circle').forEach((circle) => {
-          circle.setDestination();
-          circle.style.transition = `transform ${Math.random() * 30 + 20}s`;
-        })
-      });
-
-      circle.addEventListener('transitionend', function () {
-        this.setDestination();
-      });
-    }
-  </script>
+  
 </body>
 </html>
