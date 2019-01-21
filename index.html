@@ -743,14 +743,19 @@
         </section>  
 
       <section class="center center-align vertical fsm-explanation">
-        <div class="input fragment highlight-green"></div>
-        <div class="state" style="transform: translateX(-50px)">A</div>
+        <div class="input fragment highlight-current-green" data-fragment-index="0"></div>
+        <div class="state fragment highlight-current-green" data-fragment-index="1" style="transform: translateX(-50px)"></div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 180" style="transform: translate(138px, -53px)">
-          <!-- <line x1="50" y1="50" x2="200" y2="50" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />   -->
           <path d="M 53, 51 C 147, 25, 191, 67, 193, 130" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />
         </svg>
-        <div class="state">B</div>
-        <div class="state">C</div>
+        <div class="state fragment highlight-current-green" data-fragment-index="1" style="transform: translate(208px, 29px)"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 180" style="transform-origin: left; transform: translate(315px, 150px) rotate(.36turn)">
+          <path d="M 53, 51 C 139, 28, 174, 56, 193, 130" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />
+        </svg>
+        <div class="state fragment highlight-current-green" data-fragment-index="1" style="transform: translateX(-70px)"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 180" style="transform-origin: bottom right; transform: translate(-255px, -182px) rotate(-.327turn)">
+          <path d="M 53, 51 C 139, 28, 174, 56, 193, 130" marker-end="url(#endarrow)" marker-start="url(#startarrow)" />
+        </svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
           <defs>
             <marker id="startarrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
@@ -2800,21 +2805,15 @@ height: auto;</code></pre>
           Reveal.addEventListener('fragmenthidden', removeBorder);
         });
       </script>
+      <aside class="notes">
+        - enjoyed trip down memory lane
+        - better understanding of what goes on when you request a page
+        - also appreciate why browsers can be so weird
+      </aside>
     </section>  
       
-    <section>
-      <ul>
-        <li class="fragment">Finite state machines are cool</li>
-        <li class="fragment">Browsers are complicated</li>
-        <li class="fragment">Standards are important</li>
-      </ul>
-    </section>
-
     <section class="center">
       <h1>Browser diversity is important</h1>
-      <div class="notes">
-        make firefox great again
-      </div>
     </section>
 
     <section>
@@ -2862,11 +2861,16 @@ height: auto;</code></pre>
       <div class="footnote">
           http://gs.statcounter.com/ November 2018
       </div>
-      <div class="notes">
+      <aside class="notes">
         98% of browsers
+      </aside>
+    </section>
+    <section class="center" data-background-image="images/edge-chrome-firefox-safari.png">
+      <div class="thanks">
+        <div>Thanks!</div>
+        <div>@ErinJZimmer</div>
       </div>
     </section>
-    <section data-background-image="images/edge-chrome-firefox-safari.png"></section>
 
     </div>
   </div>

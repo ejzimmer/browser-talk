@@ -551,6 +551,7 @@ section.present div.marquee {
   height: 100%;
   --border: 4px solid #000;
   position: relative;
+  counter-reset: fsm-state;
 }
 .fsm-explanation .input {
   height: 40px;
@@ -559,8 +560,8 @@ section.present div.marquee {
   background-image: repeating-linear-gradient(to right, var(--white), var(--white) 40px, black 40px, black 44px);
   margin-bottom: 100px;
   position: relative;
-  border-color: currentColor;
-  color: black;
+  outline: 4px solid currentColor;
+  color: transparent;
 }
 .fsm-explanation .input::before {
   content: '110010101101011110';
@@ -572,6 +573,7 @@ section.present div.marquee {
 }
 .fsm-explanation .state {
   --diameter: 150px;
+  counter-increment: fsm-state;
   border: var(--border);
   background: var(--white);
   width: var(--diameter);
@@ -581,6 +583,14 @@ section.present div.marquee {
   box-sizing: border-box;
   text-align: center;
   padding-top: calc(var(--diameter) / 2 - 1.25ch);
+  box-shadow: 4px 4px currentColor, 
+              -4px -4px currentColor,
+              -4px 4px currentColor,
+              4px -4px currentColor;
+}
+.fsm-explanation .state::after {
+  content: counter(fsm-state, upper-alpha);
+  color: black;
 }
 .fsm-explanation .state:nth-child(3) {
   transform: translate(calc(var(--diameter) * -1.5), var(--diameter));
@@ -589,7 +599,7 @@ section.present div.marquee {
   transform: translate(calc(var(--diameter) * 1.5), 0);
 }
 .fsm-explanation svg {
-  stroke: var(--pink);
+  stroke: var(--white);
   stroke-width: 4;
   fill: none;
   position: fixed;
@@ -599,4 +609,22 @@ section.present div.marquee {
 }
 .fsm-explanation polygon {
   stroke-width: 1;
+}
+
+.percentage {
+  border: 4px dashed currentColor;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  text-align: center;
+  padding: 1em;
+}
+
+.thanks {
+  color: var(--black);
+  background: hsla(60, 20%, 83%, .6);
+  padding: 1.5em;
+  border: 4px solid var(--white);
+  border-radius: 5px;
+  line-height: 1.4;
 }
