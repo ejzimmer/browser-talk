@@ -7,7 +7,7 @@ body {
   --green-hue: 84;
   --green: hsl(var(--green-hue), 100%, 60%);
   --orange: hsl(20, 100%, 60%);
-  --pink: hsl(300, 100%, 60%);
+  --pink: #fe61fe;
   --background: var(--black);
   --goo-colour: hsl(var(--green-hue), 100%, 50%);
   background-color: var(--background);
