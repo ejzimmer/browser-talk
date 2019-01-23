@@ -95,19 +95,6 @@
         </aside>    
       </section>
   
-      <section data-background="images/PageLink.jpg" data-background-position="top" data-transition="fade">
-        <a class="footnote contrast" href="https://www.siliconglen.scot/pagelink/">https://www.siliconglen.scot/pagelink/</a>
-        <aside class="notes">
-          Honourable mention to Craig Cockburn at DEC who essentially invented the 
-          smartphone in 1990, before the web, before mobile phones - before 
-          DEC even believed that PCs were going to be a thing.
-
-          All the ingredients were there - internet > 20 years, hypertext around
-          We were ready for...
-        </aside>
-      </section>
-
-
       <section class="center">
         <h2>The World Wide Web</h2>
         <aside class="notes">
@@ -265,26 +252,6 @@
         <aside class="notes">
           the web was really taking off - and Netscape with it
           but HTML wasn't really keeping up with its new role
-        </aside>
-      </section>
-
-      <section class="center vertical">
-        <p>
-          As we kneel before the altar of the "ha ha, you can't control what your
-          documents look like in HTML" philosophy, you, dear sinner (nay,
-          blasphemer), can but take solace in the fact that Mosaic is putting a
-          blank line at the start of all toplevel lists, including yours,
-          entirely on purpose...
-        </p> 
-        <p>
-          What can you do about it? Probably nothing. Isn't that cheery news?
-        </p>
-        <aside class="notes">
-          As Andreesen put it when someone asked him why Mosaic added a blank line at the 
-          start of lists... 
-          I get the feeling he might not have been the most pleasant person to deal with
-          At any rate, Andreesen dealt with this problem by coming up with his own HTML tags 
-          and attributes
         </aside>
       </section>
 
@@ -1191,13 +1158,11 @@
 &lt;html&gt;
   &lt;head&gt;
     &lt;link rel="stylesheet" href="styles.css"&gt;
-    &lt;script src="app.js"&gt;&lt;/script&gt;
   &lt;/head&gt; 
   &lt;body&gt; 
     &lt;article&gt; 
       &lt;h1&gt;Cats&lt;/h1&gt;
       &lt;img src="cat.webp" /&gt;
-      &lt;p&gt;cheezburger&lt;/p&gt;
     &lt;/article&gt; 
   &lt;/body&gt;
 &lt;/html&gt;
@@ -1277,61 +1242,6 @@
   
     <section class="html-parser" data-transition="fade">
       <div class="token">
-        <div>open tag: script</div>
-        <div>[src="app.js"]</div>
-      </div>
-      <ul class="tree">
-        <li>doctype html</li>
-        <li><span>html</span>
-          <ul>
-            <li><span>head</span>
-              <ul>
-                <li>style</li>
-                <li class="fragment">script</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="open-stack">
-        <li class="fragment">script</li>
-        <li>head</li>
-        <li>html</li>
-      </ul>
-    </section>
-
-    <section class="html-parser" data-transition="fade">
-      <div class="token">
-        <div>closing tag: script</div>
-      </div>
-      <ul class="tree">
-        <li>doctype html</li>
-        <li><span>html</span>
-          <ul>
-            <li><span>head</span>
-              <ul>
-                <li>style</li>
-                <li class="fragment highlight-red" data-fragment-index="1">script</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="open-stack">
-        <li class="fragment fade-out" data-fragment-index="0">script</li>
-        <li>head</li>
-        <li>html</li>
-      </ul>
-    </section>
-
-    <section class="center vertical" data-transition="fade">
-      <div style="font-size: 48px; align-self: center">document.write();</div>
-      <div style="font-size: 48px; align-self: center" class="fragment">&lt;script src="main.js" <span class="highlight">async</span> &gt;&lt;/script&gt;</div>
-      <div style="font-size: 48px; align-self: center" class="fragment">&lt;script src="main.js" <span class="highlight">defer</span> &gt;&lt;/script&gt;</div>
-    </section>
-
-    <section class="html-parser" data-transition="fade">
-      <div class="token">
         <div>closing tag: head</div>
       </div>
       <ul class="tree">
@@ -1341,7 +1251,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
           </ul>
@@ -1364,7 +1273,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li class="fragment">body</li>
@@ -1388,7 +1296,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1417,7 +1324,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1454,7 +1360,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1492,7 +1397,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1532,7 +1436,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1559,146 +1462,7 @@
       </ul>
     </section>
   
-    <section class="html-parser" data-transition="fade">
-      <div class="token">
-        <div>opening tag: p</div>
-      </div>
-      <ul class="tree">
-        <li>doctype html</li>
-        <li>
-          <span>html</span>
-          <ul>
-            <li><span>head</span>
-              <ul>
-                <li>style</li>
-                <li>script</li>
-              </ul>
-            </li>
-            <li><span>body</span>
-              <ul>
-                <li><span>article</span>
-                  <ul>
-                    <li><span>h1</span>
-                      <ul>
-                        <li>text: Cats</li>
-                      </ul>
-                    </li>
-                    <li>img</li>
-                    <li class="fragment">p</li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="open-stack">
-        <li class="fragment">p</li>
-        <li>article</li>
-        <li>body</li>
-        <li>html</li>
-      </ul>
-    </section>
-  
-    <section class="html-parser" data-transition="fade">
-      <div class="multi-token squishy">
-        <div class="token">c</div>
-        <div class="token">h</div>
-        <div class="token">e</div>
-        <div class="token">e</div>
-        <div class="token">z</div>
-        <div class="token">b</div>
-        <div class="token">u</div>
-        <div class="token">r</div>
-        <div class="token">g</div>
-        <div class="token">e</div>
-        <div class="token">r</div>
-      </div>
-                                                                                                              
-      <ul class="tree">
-        <li>doctype html</li>
-        <li><span>html</span>
-          <ul>
-            <li><span>head</span>
-              <ul>
-                <li>style</li>
-                <li>script</li>
-              </ul>
-            </li>
-            <li><span>body</span>
-              <ul>
-                <li><span>article</span>
-                  <ul>
-                    <li><span>h1</span>
-                      <ul>
-                        <li>text: Cats</li>
-                      </ul>
-                    </li>
-                    <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li class="fragment">text: cheezburger</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="open-stack">
-        <li>p</li>
-        <li>article</li>
-        <li>body</li>
-        <li>html</li>
-      </ul>
-    </section>
-
-    <section class="html-parser" data-transition="fade">
-      <div class="token">
-        <div>closing tag: p</div>
-      </div>
-      <ul class="tree">
-        <li>doctype html</li>
-        <li><span>html</span>
-          <ul>
-            <li><span>head</span>
-              <ul>
-                <li>style</li>
-                <li>script</li>
-              </ul>
-            </li>
-            <li><span>body</span>
-              <ul>
-                <li><span>article</span>
-                  <ul>
-                    <li><span>h1</span>
-                      <ul>
-                        <li>text: Cats</li>
-                      </ul>
-                    </li>
-                    <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li>text: cheezburger</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="open-stack">
-        <li class="fragment fade-out">p</li>
-        <li>article</li>
-        <li>body</li>
-        <li>html</li>
-      </ul>
-    </section>
-
+ 
     <section class="html-parser" data-transition="fade">
       <div class="token">
         <div>closing tag: article</div>
@@ -1710,7 +1474,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1723,11 +1486,6 @@
                       </ul>
                     </li>
                     <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li>text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -1753,7 +1511,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1766,11 +1523,6 @@
                       </ul>
                     </li>
                     <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li>text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -1795,7 +1547,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1808,11 +1559,6 @@
                       </ul>
                     </li>
                     <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li>text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -1833,7 +1579,6 @@
             <li><span>head</span>
               <ul>
                 <li>style</li>
-                <li>script</li>
               </ul>
             </li>
             <li><span>body</span>
@@ -1846,11 +1591,6 @@
                       </ul>
                     </li>
                     <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li>cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -1907,66 +1647,6 @@
         need to combine DOM and CSSOM
       </aside>
     </section>
-
-    <section data-transition="fade">
-      <ul class="tree small">
-        <li class="fragment fade-out" data-fragment-index="1">
-          <span class="fragment highlight-red" data-fragment-index="0"> 
-            doctype html
-          </span>
-        </li>
-        <li>
-          <span class="fragment highlight-red" data-fragment-index="2">
-            <span class="fragment highlight-blue" data-fragment-index="4">html</span>
-          </span>
-          <ul>
-            <li>
-              <span class="fragment highlight-red" data-fragment-index="4">
-                <span class="fragment highlight-blue" data-fragment-index="7">head</span>
-              </span>
-              <ul>
-                <li class="fragment highlight-red" data-fragment-index="8">style</li>
-                <li>script</li>
-              </ul>
-            </li>
-            <li><span>body</span>
-              <ul>
-                <li><span>article</span>
-                  <ul>
-                    <li><span>h1</span>
-                      <ul>
-                        <li>text: Cats</li>
-                      </ul>
-                    </li>
-                    <li>img</li>
-                    <li><span>p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    
-      <div class="fake-css"></div>
-      <span class="fragment highlight-blue" data-fragment-index="4">
-        <svg data-fragment-index="3" class="arrow fragment html" width="100" height="100" style="top: 150px; left: 200px; transform: scale(3.4, 2.2)" >
-            <path d="M0 0 Q 55 10 100 100" />
-        </svg>
-      </span>
-      <span class="fragment highlight-blue" data-fragment-index="7">
-        <svg data-fragment-index="6" class="arrow fragment head" width="100" height="100" style="top: 185px; left: 230px; transform: scale(3.1, 1.5)" >
-            <path d="M0 0 Q 55 10 100 100" />
-        </svg>
-      </span>
-      <svg class="arrow fragment" width="100" height="100" style="top: 225px; left: 235px; transform: scale(3, 1.1)" >
-          <path d="M0 0 Q 55 10 100 100" />
-      </svg>
-    </section>
   
     <section data-transition="fade" data-autoslide="500">
       <ul class="tree small">
@@ -1976,7 +1656,7 @@
             <li><span class="highlight-blue">head</span>
               <ul>
                 <li class="highlight-blue">style</li>
-                <li class="highlight-blue">script</li>
+                <li style="visibility: hidden">script</li>
               </ul>
             </li>
             <li><span class="highlight-blue">body</span>
@@ -1989,7 +1669,7 @@
                       </ul>
                     </li>
                     <li class="highlight-blue">img</li>
-                    <li><span class="highlight-blue">p</span>
+                    <li style="visibility: hidden"><span class="highlight-blue">p</span>
                       <ul>
                         <li style="width: 18ch">text: cheezburger</li>
                       </ul>
@@ -2010,9 +1690,6 @@
           <path d="M0 0 Q 55 10 100 100" />
       </svg>
       <svg class="arrow style done" width="100" height="100" style="top: 225px; left: 235px; transform: scale(3, 1.1)" >
-          <path d="M0 0 Q 55 10 100 100" />
-      </svg>
-      <svg class="arrow script fragment done" width="100" height="100" style="top: 260px; left: 245px; transform: scale(2.9, 1.1)" >
           <path d="M0 0 Q 55 10 100 100" />
       </svg>
       <svg class="arrow body fragment done" width="100" height="100" style="top: 294px; left: 208px; transform: scale(2.45, 2) rotate(-.08turn)" >
@@ -2036,9 +1713,6 @@
       <svg class="arrow img fragment done" width="100" height="100" style="top: 442px; left: 250px; transform: scale(2.9, 2.6) rotate(-.25turn)" >
           <path d="M0 0 C 40 75 98 30 100 100" />
       </svg>
-      <svg class="arrow p fragment done" width="100" height="100" style="top: 484px; left: 230px; transform: scale(2.75, 4) rotate(-.23turn);" >
-          <path style="stroke-width: 1px" d="M0 0 C 40 75 90 30 100 100" />
-      </svg>
       <p class="fragment" data-autoslide="1000000"></p>
     </section>
   
@@ -2046,7 +1720,7 @@
       <h2>Layout</h2>
     </section>
 
-    <section>
+    <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
           <span class="style-1 fragment highlight-red" data-fragment-index="0">html</span>
@@ -2055,7 +1729,6 @@
               <span class="style-1">head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2071,12 +1744,6 @@
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2088,13 +1755,7 @@
       </div>  
     </section>
 
-    <section class="center">
-      <pre style="font-size: 2em"><code class="css">display: block;
-width: 100%;
-height: 100%;</code></pre>
-    </section>
-
-    <section>
+    <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
           <span class="style-1 highlight-red visible" data-fragment-index="0">
@@ -2105,7 +1766,6 @@ height: 100%;</code></pre>
               <span class="style-1 fragment highlight-red" data-fragment-index="2">head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2121,12 +1781,6 @@ height: 100%;</code></pre>
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2143,7 +1797,7 @@ height: 100%;</code></pre>
       <pre style="font-size: 2em;"><code class="css">display: none;</code></pre>
     </section>
 
-    <section>
+    <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
           <span class="style-1 highlight-blue">html</span>
@@ -2152,14 +1806,12 @@ height: 100%;</code></pre>
               <span class="style-1 highlight-red visible" data-fragment-index="0">head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
               <span class="style-1 user-style fragment highlight-red" data-fragment-index="2">body</span>
               <ul>
-                <li>
-                  <span class="user-style style-2">article</span>
+                <li><span class="user-style style-2">article</span>
                   <ul>
                     <li>
                       <span class="user-style style-2">h1</span>
@@ -2168,12 +1820,6 @@ height: 100%;</code></pre>
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2186,15 +1832,7 @@ height: 100%;</code></pre>
       </div>  
     </section>
 
-    <section class="center">
-      <pre style="font-size: 1.5em;"><code class="css" data-noescape>margin: 0;
-display: block;
-width: 100%;
-height: 100%;
-<span style="text-decoration: line-through;">margin: 8px;</span></code></pre>
-    </section>
-  
-    <section>
+    <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
           <span class="style-1 highlight-blue">html</span>
@@ -2203,7 +1841,6 @@ height: 100%;
               <span>head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2221,12 +1858,6 @@ height: 100%;
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2241,17 +1872,7 @@ height: 100%;
       </div>  
     </section>
     
-    <section class="center">
-      <pre style="font-size: 1.5em;"><code class="css" data-noescape>display: block;
-margin-top: 30px;
-margin-bottom: 30px;
-margin-left: 30px;
-margin-right: 30px;
-width: 100%;
-height: auto;</code></pre>
-    </section>
-
-    <section>
+    <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
           <span class="style-1 highlight-blue">html</span>
@@ -2260,7 +1881,6 @@ height: auto;</code></pre>
               <span>head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2280,12 +1900,6 @@ height: auto;</code></pre>
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2301,17 +1915,7 @@ height: auto;</code></pre>
         </div>
       </div>  
     </section>
-  
-    <section class="center">
-      <pre style="font-size: 1.5em;"><code class="css" data-noescape>display: block;
-margin-top: 12px;
-margin-bottom: 12px;
-margin-left: 0;
-margin-right: 0;
-width: 100%;
-height: auto;</code></pre>
-    </section>
-  
+    
     <section data-transition="fade">
       <ul class="tree small with-styles">
         <li>
@@ -2321,7 +1925,6 @@ height: auto;</code></pre>
               <span>head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2337,20 +1940,12 @@ height: auto;</code></pre>
                         </span>
                       </span>
                       <ul>
-                        <li>
-                          <span class="fragment highlight-red" data-fragment-index="1">
-                            <span class="fragment highlight-blue" data-fragment-index="3">text: Cats</span>
+                        <li><span class="fragment highlight-red" data-fragment-index="1"><span class="fragment highlight-blue" data-fragment-index="3">text: Cats</span>
                           </span>
                         </li>
                       </ul>
                     </li>
                     <li><span class="user-style style-2">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2382,7 +1977,6 @@ height: auto;</code></pre>
               <span>head</span>
               <ul>
                 <li class="style-none">style</li>
-                <li class="style-none">script</li>
               </ul>
             </li>
             <li>
@@ -2400,12 +1994,6 @@ height: auto;</code></pre>
                       </ul>
                     </li>
                     <li><span class="user-style style-2 fragment highlight-red">img</span></li>
-                    <li>
-                      <span class="user-style style-2">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2424,137 +2012,6 @@ height: auto;</code></pre>
       </div>  
     </section>
 
-    <section class="center">
-      <pre><code class="css">display: inline;
-width: 200px;
-height: 200px;</code></pre>
-    </section>
-
-    <section data-transition="fade">
-      <ul class="tree small with-styles">
-        <li>
-          <span class="style-1 highlight-blue">html</span>
-          <ul>
-            <li style="opacity: 0">
-              <span>head</span>
-              <ul>
-                <li class="style-none">style</li>
-                <li class="style-none">script</li>
-              </ul>
-            </li>
-            <li>
-              <span class="style-1 user-style highlight-blue">body</span>
-              <ul>
-                <li>
-                  <span class="user-style style-2 highlight-blue">article</span>
-                  <ul>
-                    <li>
-                      <span class="user-style style-2 highlight-blue">h1</span>
-                      <ul>
-                        <li><span class="highlight-blue">text: Cats</span></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <span class="user-style style-2 highlight-red visible">
-                        <span class="fragment highlight-blue" data-fragment-index="1">img</span> 
-                      </span></li>
-                    <li>
-                      <span class="user-style style-2 fragment highlight-red" data-fragment-index="1">p</span>
-                      <ul>
-                        <li style="width: 18ch">text: cheezburger</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <div class="layout">
-        <div class="html">
-          <div class="body">
-            <div class="article">
-              <div class="h1 visible">Cats</div>
-              <div class="img fragment invisible" data-fragment-index="0"></div>
-            </div>
-          </div>
-        </div>
-      </div>  
-    </section>
-
-    <section class="center">
-      <pre><code class="css">display: block;
-margin-top: 16px;
-margin-bottom: 16px;
-width: 100%;
-height: auto;</code></pre>
-    </section>
-  
-    <section data-transition="fade">
-      <ul class="tree small with-styles">
-        <li>
-          <span class="style-1 highlight-blue">html</span>
-          <ul>
-            <li style="opacity: 0">
-              <span>head</span>
-              <ul>
-                <li class="style-none">style</li>
-                <li class="style-none">script</li>
-              </ul>
-            </li>
-            <li>
-              <span class="style-1 user-style highlight-blue">body</span>
-              <ul>
-                <li>
-                  <span class="user-style style-2 highlight-blue">article</span>
-                  <ul>
-                    <li>
-                      <span class="user-style style-2 highlight-blue">h1</span>
-                      <ul>
-                        <li><span class="highlight-blue">text: Cats</span></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <span class="user-style style-2 highlight-blue">img</span> 
-                    </li>
-                    <li>
-                      <span class="user-style style-2 highlight-red visible">
-                        <span class="fragment highlight-blue" data-fragment-index="1">
-                          <span class="fragment highlight-red" data-fragment-index="3">p</span>
-                        </span>
-                      </span>
-                      <ul>
-                        <li style="width: 18ch">
-                          <span class="fragment highlight-red" data-fragment-index="1">
-                            <span class="fragment highlight-blue" data-fragment-index="3">
-                                text: cheezburger
-                            </span>
-                          </span>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-      <div class="layout">
-        <div class="html">
-          <div class="body">
-            <div class="article">
-              <div class="h1 visible">Cats</div>
-              <div class="img"></div>
-              <div class="article p fragment invisible" data-fragment-index="0">
-                <div class="fragment invisible" data-fragment-index="2" style="position: absolute; top: -8px">cheezburger</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>  
-    </section>
     
     <section data-transition="fade">
       <ul class="tree small with-styles">
@@ -2583,19 +2040,6 @@ height: auto;</code></pre>
                     <li>
                       <span class="user-style style-2 highlight-blue">img</span> 
                     </li>
-                    <li>
-                      <span class="user-style style-2 highlight-red visible">
-                        p
-                      </span>
-                      <ul>
-                        <li style="width: 18ch">
-                            <span class="highlight-blue">
-                                text: cheezburger
-                            </span>
-                          </span>
-                        </li>
-                      </ul>
-                    </li>
                   </ul>
                 </li>
               </ul>
@@ -2609,9 +2053,6 @@ height: auto;</code></pre>
             <div class="article">
               <div class="h1 visible">Cats</div>
               <div class="img"></div>
-              <div class="article p">
-                <div>cheezburger</div>
-              </div>
             </div>
           </div>
         </div>
@@ -2625,9 +2066,6 @@ height: auto;</code></pre>
             <div class="article">
               <div class="h1 visible">Cats</div>
               <div class="img"></div>
-              <div class="article p">
-                <div>cheezburger</div>
-              </div>
             </div>
           </div>
         </div>
@@ -2662,9 +2100,6 @@ height: auto;</code></pre>
             <div class="article fragment">
               <div class="h1 fragment">Cats</div>
               <div class="img fragment"></div>
-              <div class="p">
-                <div class="fragment">cheezburger</div>
-              </div>
             </div>
           </div>
         </div>

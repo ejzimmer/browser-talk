@@ -411,7 +411,7 @@ svg.hidden {
 .layout {
   border-left: 1px solid var(--white);
   padding: 20px;
-  width: 100%;
+  width: 50%;
 }
 .paint {
   width: 50vw;
