@@ -1,0 +1,125 @@
+* {
+	--default-colour: hsl(200, 90%, 50%);
+	--highlight-colour: hsl(100, 90%, 50%);
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: #333;
+	height: 100vh;
+}
+
+button.forward, button.play {
+	position: fixed;
+	bottom: 60px;
+	color: var(--default-colour);
+	stroke: currentColor;
+	border: none;
+	background: none;
+	font-size: 6em;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all .2s;
+	filter: drop-shadow(0 0 10px hsla(0, 0%, 20%, .5));
+	stroke-width: 12;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	fill: none;
+}
+button.forward:hover, button.play:hover {
+	color: var(--highlight-colour);
+}
+
+button.play {
+	right: 140px;
+}
+
+button.forward {
+	right: 60px;
+}
+
+.output ul {
+	list-style-type: none;
+	color: black;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	font-size: 1.5rem;
+	display: flex;
+	flex-direction: column;
+}
+
+.output ul .node, .output ul.text li {
+	--hue: 250;
+	height: 50px;
+	border: 4px solid transparent;
+	padding: 2px;
+	border-radius: 15px;
+	background:
+		linear-gradient(#ccc, #ccc) content-box,
+		linear-gradient(hsl(var(--hue), 50%, 60%), hsl(var(--hue), 50%, 40%)) padding-box,
+		linear-gradient(#bbb 30%, #999) border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 200px;
+	transition: opacity .5s;
+}
+
+.output ul ul .node {
+	--hue: 200;
+}
+.output ul ul ul .node {
+	--hue: 150;
+}
+.output ul ul ul ul .node {
+	--hue: 50;
+}
+
+.output ul.text li.node {
+	--hue: 350;
+	width: 60px;
+}
+
+.output ul .node::before, .output ul.text li::before {
+	content: '';
+	width: .5em;
+	height: .5em;
+	border-radius: 50%;
+}
+
+.output ul.text {
+	flex-direction: row;
+}
+
+.output ul .node.visible {
+	opacity: 1;
+}
+
+.reveal section .red, .red { --colour: hsl(340, 50%, 50%); }
+.reveal section .orange, .orange { --colour: hsl(29, 75%, 49%); }
+.reveal section .yellow, .yellow { --colour: hsl(51, 86%, 53%); }
+.reveal section .green, .green { --colour: hsl(118, 69%, 47%); }
+.reveal section .grey, .grey { --colour: hsl(34, 3%, 40%); }
+.reveal section .blue, .blue { --colour: hsl(251, 82%, 52%); }
+
+.reveal section table tr.fragment.highlight.visible {
+	background: var(--colour);
+	color: #eee;
+}
+.reveal section .output .style.fragment.highlight.visible::before, .output .style.fragment.highlight.visible::before {
+	box-shadow: 170px 0 0 0 var(--colour);
+}
+.reveal section .output .style .style {
+	position: relative;
+}
+.output .style .style.fragment.highlight.visible::after {
+	content: '';
+	width: .5em;
+	height: .5em;
+	border-radius: 50%;
+	background-color: var(--colour);
+	display: block;
+	position: absolute;
+	right: -77px;
+	top: 12px;
+}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Layout</title>
+	<link rel="stylesheet" href="../shared.css">
+	<link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
+
+	<style>
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: space-around;			
+		}
+		.layout > :first-child {
+			padding-right: 40px;
+			border-right: 4px solid white;
+		}
+		.layout {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.output ul .node {
+			position: relative;
+		}
+		.output ul .node.current {
+			color: #bbb;
+			background:
+				linear-gradient(hsl(var(--hue), 50%, 60%), hsl(var(--hue), 50%, 40%)) content-box,
+				linear-gradient(#bbb, #999) padding-box,
+				linear-gradient(hsl(var(--hue), 50%, 60%), hsl(var(--hue), 50%, 40%)) border-box;
+		}
+		.output ul .node.past {
+			opacity: .5;
+		}
+		.output .style .style.fragment.highlight.visible::after {
+			right: 26px;
+			top: 37%;
+		}
+
+		.css {
+			border: solid var(--colour);
+			border-radius: 8px;
+			background: linear-gradient(-45deg, hsl(40, 30%, 70%), hsl(40, 20%, 80%)) ;
+			position: absolute;
+			left: calc(100% + 10px);
+			z-index: 1;
+			font-family: 'Special Elite';
+			width: max-content;
+			width: 0;
+			padding: 0;
+			border-width: 0;
+			overflow: hidden;
+			transition: all .5s;
+			color: #333;
+		}
+
+		.node.current:not(.past) .css {
+			border-width: 4px;
+			padding: 20px;
+			width: max-content;
+		}
+
+		#page .html {
+			border: 4px dashed white;
+			padding: 1px;
+			background: hsla(200, 50%, 50%, .4) content-box;	
+		}
+		#page .body {
+			margin: 8px;
+			border: 4px dashed hsl(200, 50%, 50%);
+		}
+		#page .article {
+			padding: 10px;
+			border: 4px dashed hsl(118, 69%, 47%);
+			background: hsla(118, 69%, 47%, .4);
+		}
+		#page .h1 {
+			margin: 20px 0;
+			border: 4px dashed hsl(51, 86%, 53%);
+			background: hsla(51, 86%, 53%, .4);
+			position: relative;
+		}
+		#page .text-node {
+			position: absolute;
+			font-size: 3em;
+		}
+		#page .img {
+			border: 3px solid red;
+			width: 200px;
+			height: 200px;
+			position: absolute;
+			background: hsla(51, 86%, 53%, .4);
+		}
+
+	</style>
+</head>
+<body>
+	<div class="layout">
+		<div class="output">
+			<ul>
+				<li class="node">doctype html</li>
+				<li>
+					<div class="node">html</div>
+					<ul>
+						<li>
+							<div class="node style grey fragment visible highlight" data-fragment-index="10">
+								head
+								<div class="css">display: none</div>
+							</div>
+							<ul>
+								<li class="node">link</li>
+							</ul>
+						</li>
+						<li>
+							<div class="node style blue fragment visible highlight" data-fragment-index="12">
+								body
+								<div class="css">margin: 8px</div>
+							</div>
+							<ul>
+								<li>
+									<div class="node style red fragment visible highlight" data-fragment-index="2">
+										<div class="style yellow fragment visible highlight" data-fragment-index="6">
+											article
+											<div class="css" style="bottom: 50%">padding: 10px</div>
+											<div class="css red" style="bottom: -150%">background: aliceblue</div>
+										</div>
+									</div>
+									<ul>
+										<li>
+											<div class="node style orange fragment highlight visible" data-fragment-index="4">
+												h1
+												<div class="css">margin: 20px</div>
+											</div>
+											<ul class="text">
+												<li class="node">C</li>
+												<li class="node">a</li>
+												<li class="node">t</li>
+												<li class="node">s</li>
+											</ul>
+										</li>
+										<li class="node style green fragment highlight visible" data-fragment-index="8">
+											img
+											<div class="css">border: 3px solid red</div>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id="page">
+
+		</div>
+	</div> 
+	<button class="forward">
+		<svg viewBox="0 0 100 100" width="80px" height="80px">
+			<path d="M6 6  l60 44  -60 44" />
+		</svg>				
+	</button>
+	<script>
+		let nodeIndex = 0;
+		let currentNode;
+		const nodes = document.querySelectorAll('.node');
+
+		let parentNode = document.getElementById('page');
+
+		document.querySelector('button.forward').addEventListener('click', nextAction);
+		document.querySelector('body').addEventListener('keyup', (event) => {
+			if (event.key === 'ArrowRight' || event.key === 'PageDown') {
+				nextAction();
+			}
+		});
+
+		let actionIndex = -1;
+		const actions = [highlight, add, remove];
+		function nextAction() {
+			currentNode = nodes[nodeIndex];
+
+			actionIndex = (actionIndex + 1) % actions.length;
+			actions[actionIndex]();
+		}
+
+		function highlight() {
+			currentNode.classList.add('current');
+		}
+		function add() {
+			if (currentNode.textContent.includes('doctype') || noDisplay(currentNode)) {
+				nextAction();	
+			} else if (currentNode.parentNode.classList.contains('text')) {
+				if (parentNode.classList.contains('text-node')) {
+					parentNode.textContent += currentNode.textContent;
+				} else {
+					const el = document.createElement('span');
+					el.classList.add('text-node');
+					el.textContent = currentNode.textContent;
+					parentNode.appendChild(el);
+					parentNode = el;
+				}
+			} else {
+				const el = document.createElement('div');
+				el.classList.add(getNodeName(currentNode));
+				parentNode.appendChild(el);
+				parentNode = el;
+			}
+		}
+		function remove() {
+			currentNode.classList.add('past');
+
+			if (noDisplay(currentNode)) {
+				hideDescendants(currentNode);
+			}
+
+			if (isLastTextNode(currentNode) || isImgNode(currentNode)) {
+				resize();
+				parentNode = parentNode.parentNode;
+			}
+
+			if (isLastNode(currentNode)) {
+				parentNode = parentNode.parentNode;
+			}
+	
+			nodeIndex++;
+		}
+
+		function noDisplay(node) {
+			return currentNode.innerHTML.includes('display: none')
+		}
+
+		function hideDescendants(node) {
+			nodeIndex--; // because we're going to the parent
+			hideChildren(node.parentNode);
+		}
+		function hideChildren(node) {
+			Array.from(node.children).forEach(child => {
+				if (child.classList.contains('node')) {
+					child.classList.add('past');
+					nodeIndex++;
+				}
+				hideChildren(child);
+			});
+		}
+
+		function getNodeName(node) {
+			const child = node.firstChild;
+
+			if (!child) { return; }
+
+			if (child.nodeName === '#text' && child.textContent.trim()) {
+				return child.textContent.trim();
+			}
+
+			const nodes = node.childNodes;
+			for (node of nodes) {
+				const name = getNodeName(node);
+				if (name) return name;
+			}
+		}
+
+		function isLastTextNode(node) {
+			const parent = node.parentNode;
+			return parent.classList.contains('text') && isLastNode(node);
+		}
+		function resize() {
+			parentNode.style.position = 'static';
+		}
+
+		function isImgNode(node) {
+			return node.textContent.includes('img');
+		}
+
+		function isLastNode(node) {
+			return node.parentNode.lastElementChild === node;
+		}
+	</script>	
+</body>
+</html>

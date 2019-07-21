@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>HTML Parser</title>
+
+	<link rel="stylesheet" href="../shared.css">
+
+	<style>
+		.parser {
+			width: 100%;
+			height: 100%;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.parser > *:last-child {
+			border-left: 4px solid white;
+		}
+
+		.input {
+			position: relative;
+			margin: 40px;
+		}
+
+		input-token {
+			width: 250px;
+			height: 125px;
+			font-size: 1.5em;
+			transform: translateX(-50vw);
+			transition: transform .5s;
+			position: absolute;
+			top: 0;
+		}
+		input-token.current, .stack input-token {
+			transform: translateX(0);
+		}
+
+		.stack {
+			position: absolute;
+			bottom: 0;
+			right: 25%;
+			display: flex;
+			flex-direction: column-reverse;
+		}
+		.stack input-token {
+			position: relative;
+			top: -100%;
+		}
+		.stack input-token + input-token {
+			transform: translateY(80%);
+			box-shadow: 0 4px 3px -3px rgba(3, 3, 3, .5);
+		}
+		.stack input-token + input-token + input-token {
+			transform: translateY(160%);
+		}
+		.stack input-token + input-token + input-token + input-token {
+			transform: translateY(240%);
+		}
+
+		.output ul .node, .output ul.text li {
+			opacity: 0;
+		}
+
+		button {
+			position: fixed;
+			bottom: 10px;
+			right: 10px;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="parser">
+		<div class="input">
+			<div class="stack"></div>
+		</div>
+		<div class="output">
+			<ul>
+				<li class="node">doctype html</li>
+				<li>
+					<div class="node">html</div>
+					<ul>
+						<li>
+							<div class="node">head</div>
+							<ul>
+								<li class="node">link</li>
+							</ul>
+						</li>
+						<li>
+							<div class="node">body</div>
+							<ul>
+								<li>
+									<div class="node">article</div>
+									<ul>
+										<li>
+											<div class="node">h1</div>
+											<ul class="text">
+												<li class="node">C</li>
+												<li class="node">a</li>
+												<li class="node">t</li>
+												<li class="node">s</li>
+											</ul>
+										</li>
+										<li class="node">img</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<button class="forward">
+		<svg viewBox="0 0 100 100" width="80px" height="80px">
+			<path d="M6 6  l60 44  -60 44" />
+		</svg>		
+	</button>
+
+	<script type="module">
+		import { Token } from '../tokeniser/token.js';
+		import { tokens } from '../parser/tokens.js';
+
+		customElements.define('input-token', Token);
+
+		const inputTokens = document.querySelector('.input');
+		tokens.forEach(token => {
+			const el = document.createElement('input-token');
+			el.selfclosing = token.selfclosing;
+			el.setAttribute('type', token.type);
+
+			Object.entries(token)
+				.filter(([name, value]) => name !== 'type' && name !== 'selfclosing')
+				.map(([name, value]) => `<div>${name}=${value}</div>`)
+				.forEach(prop => el.innerHTML += prop);
+			
+			inputTokens.append(el);
+		});
+
+
+		document.querySelector('button').addEventListener('click', nextAction);
+		document.querySelector('body').addEventListener('keyup', (event) => {
+			if (event.key === 'ArrowRight' || event.key === 'PageDown') {
+				nextAction();
+			}
+		});
+
+		let actionIndex = -1;
+		const actions = [nextToken, nextNode, updateStack];
+		function nextAction() {
+			actionIndex = (++actionIndex % actions.length);
+			actions[actionIndex]();
+		}
+
+		let tokenIndex = 0;
+		let currentToken;
+		function nextToken() {	
+			if (currentToken) {
+				currentToken.classList.remove('current');
+			}
+
+			currentToken = document.querySelector(`.input > input-token:nth-of-type(${++tokenIndex})`);
+			currentToken.classList.add('current');
+		}
+
+		let nodeIndex = 0;
+		function nextNode() {
+			if (currentToken.type === 'end tag') {
+				nextAction();
+			} else {
+				document.querySelectorAll('.output .node')[nodeIndex++].classList.add('visible');
+			}
+		}
+
+		const stack = document.querySelector('.input .stack');
+		function updateStack() {
+			if (currentToken.type === 'open tag' && !currentToken.selfclosing) {
+				stack.append(currentToken);
+				tokenIndex--;
+			} else if (currentToken.type === 'end tag') {
+				const topOfStack = stack.querySelector('input-token:last-child');
+				stack.removeChild(topOfStack);
+			} else {
+				nextAction();
+			}
+		}
+	</script>
+</body>
+</html>

@@ -17,9 +17,6 @@ body {
   margin: 0;
 }
 
-.highlight {
-  color: var(--orange);
-}
 .highlight-blue:not(.fragment) {
   color: var(--light-blue);
 }
@@ -54,6 +51,7 @@ h1 {
 h2 {
   text-transform: uppercase;
   margin: auto;
+  font-size: 40px;
 }
 
 div, p {
@@ -301,47 +299,53 @@ ul.open-stack li {
   width: 33%;
 }
 
-.parsed-css {
-  width: 100%;
-  height: 100%;
+.fuck-you-pretty-table {
+  --hue: 342;
+  --background: green;
+  padding: 4px;
+  border: 8px solid transparent;
+  border-radius: 15px;
+  background:
+		linear-gradient(#ddd, #fff) content-box,
+    linear-gradient(hsl(var(--hue), 50%, 60%), hsl(var(--hue), 50%, 40%)) padding-box,
+    linear-gradient(#fff, #ddd) border-box;
+  overflow: hidden;
+}
+
+section table.parsed-css {
   text-align: left;
   font-size: .8em;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--white);
   color: var(--black);
+  margin: 3px;
   border-collapse: collapse;
+  overflow: hidden;
+} 
+.parsed-css th:first-child {
+  border-top-left-radius: 5px;
 }
-.parsed-css tr {
-  border-bottom: 2px solid var(--black);
+.parsed-css th:last-child {
+  border-top-right-radius: 5px;
 }
-.parsed-css thead {
- background-color: hsl(50, 20%, 70%);
+
+.parsed-css tr:not(:last-child) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 2px solid hsl(var(--hue), 50%, 40%);
 }
+
+.parsed-css thead tr {
+  border-bottom: 4px ridge hsl(var(--hue), 50%, 60%);
+}
+
 .parsed-css tr:nth-child(2n) {
-  background-color: hsl(50, 20%, 80%);
+  background: linear-gradient(#ddd, #eee)
 }
 .parsed-css td, .parsed-css th {
   padding: .6em;
 }
 .parsed-css tr td:last-child, .parsed-css tr td:nth-last-child(2) {
   text-align: center;
-}
-
-.fake-css {
-  width: 100%;
-  height: 2em;
-  border-bottom: 2px solid var(--black);
-  background-color: hsl(50, 20%, 70%);
-  box-shadow: 0 2em var(--white),
-              0 4em hsl(50, 20%, 80%),
-              0 6em var(--white),
-              0 8em hsl(50, 20%, 80%),
-              0 10em var(--white),
-              0 12em hsl(50, 20%, 80%),
-              0 14em var(--white),
-              0 16em hsl(50, 20%, 80%);
-  transform: scale(.5) translate(-60%, 120px);
-  position: relative;
 }
 
 .tree.small {
@@ -498,12 +502,18 @@ svg.hidden {
 }
 
 div.marquee {
-  transform: translateX(100vw);
-  transition: transform 20s linear;
+  --direction: 1;
+  transform: translateX(calc(60% * var(--direction)));
+  transition: transform 100s linear;
   white-space: nowrap;
 }
 section.present div.marquee {
-  transform: translateX(-100vw);
+  transform: translateX(calc(-100% * var(--direction)));
+}
+
+div.marquee.reverse {
+  --direction: -1;
+  transition-duration: 50s;
 }
 
 .layout .article.p.visible {
@@ -554,7 +564,7 @@ section.present div.marquee {
   counter-reset: fsm-state;
 }
 .fsm-explanation .input {
-  height: 40px;
+  height: 55px;
   width: 80%;
   border: var(--border);
   background-image: repeating-linear-gradient(to right, var(--white), var(--white) 40px, black 40px, black 44px);
@@ -564,11 +574,11 @@ section.present div.marquee {
   color: transparent;
 }
 .fsm-explanation .input::before {
-  content: '110010101101011110';
+  content: '11001010110101111';
   position: absolute;
   color: black;
   padding-left: 12px;
-  letter-spacing: 25px;
+  letter-spacing: 24.5px;
   overflow: hidden
 }
 .fsm-explanation .state {
@@ -622,7 +632,7 @@ section.present div.marquee {
 
 .thanks {
   color: var(--black);
-  background: hsla(60, 20%, 83%, .6);
+  background: hsla(60, 20%, 83%, .8);
   padding: 1.5em;
   border: 4px solid var(--white);
   border-radius: 5px;

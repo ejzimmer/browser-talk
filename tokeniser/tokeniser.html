@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>HTML Tokeniser</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
+	<link rel="stylesheet" href="../shared.css">
+
+	<style>
+		* {
+			--default-colour: hsl(200, 90%, 50%);
+			--highlight-colour: hsl(100, 90%, 50%);
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 8vmin;
+			background: #333;
+		}
+
+		#tokens {
+			display: flex;
+			margin-top: 20px;
+			--saturation: 10%;
+			justify-content: flex-end;
+			max-width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<state-container></state-container>
+	<div id="tokens">
+	</div>
+
+	<button class="forward">
+		<svg viewBox="0 0 100 100" width="80px" height="80px">
+			<path d="M6 6  l60 44  -60 44" />
+		</svg>
+	</button>
+
+	<button class="play">
+		<svg viewBox="0 0 100 100" width="80px" height="80px">
+			<path d="M6 6  l60 44  -60 44Z" fill="currentColor" />
+		</svg>		
+	</button>
+
+	<script type="module">
+		import { Token } from './token.js';
+		import { states } from './states.js';
+		import { StateMachine } from './state-machine.js';
+
+		customElements.define('state-container', StateMachine);
+		customElements.define('output-token', Token);
+
+		const stateMachine = document.querySelector('state-container');
+		stateMachine.states = states;
+
+		const tokenContainer = document.getElementById('tokens');
+
+		document.querySelector('button.forward').addEventListener('click', stateMachine.next.bind(stateMachine));
+		document.querySelector('button.play').addEventListener('click', () => {
+			const interval = setInterval(() => {
+				if (stateMachine.hasNext) {
+					stateMachine.next();
+				} else {
+					clearInterval(interval);
+				}
+			}, 1000);
+		})
+
+		window.addEventListener('token', (event) => {
+			const token = document.createElement('output-token');
+			token.setAttribute('type', event.detail.type);
+			tokenContainer.appendChild(token);
+
+			if (event.detail.name) {
+				token.createName(event.detail.name);
+			}
+
+			if (event.detail.attribute) {
+				token.createAttribute(event.detail.attribute.name);
+				token.updateAttributeValue(event.detail.attribute.value);
+			}
+
+			if (event.detail.value) {
+				token.createValue(event.detail.value);
+			}
+		});
+	</script>
+</body>
+</html>
