@@ -28,6 +28,10 @@
       transform: translateX(0);
     }
 
+    .reveal section .fragment.visible.fade-a-bit:not(.current-fragment) {
+      opacity: .5;
+    }
+
     .slide-background {
       background-repeat: no-repeat;
       background-position: center;
@@ -241,7 +245,10 @@
           <img src="images/Chromium_Icon.png" class="fragment">
           <div class="fragment"><code>&lt;blink&gt;</code></div>
           <img src="images/Microsoft_Edge_logo.svg" class="fragment">
-          <div class="fragment"><code>&lt;blink&gt;</code></div>
+          <div style="display: flex; align-items: center; position: relative; width: 100%">
+            <img style="flex-shrink: 0" src="images/Microsoft_Edge_logo.svg" class="fragment fade-a-bit">
+            <div style="position: absolute" class="fragment slide-in"><code>&lt;blink&gt;</code></div>
+          </div>
         </div>
         <aside class="notes">
           open source vs proprietary 
@@ -662,12 +669,10 @@
               <th class="fragment highlight-column" data-fragment-index="6">Order</th>
             </thead>
             <tr><td class="fragment highlight-column" data-fragment-index="1">User</td>   <td class="fragment highlight-column" data-fragment-index="2">*</td>                  <td class="fragment highlight-column" data-fragment-index="3">font-size</td>        <td class="fragment highlight-column" data-fragment-index="4">32px</td>           <td class="fragment highlight-column" data-fragment-index="5">0 0 0 0 1</td> <td class="fragment highlight-column" data-fragment-index="6">0</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td> <td class="fragment highlight-column" data-fragment-index="2">td .fancy-button</td>	  <td class="fragment highlight-column" data-fragment-index="3">background-color</td>	<td class="fragment highlight-column" data-fragment-index="4">rgb(255,255,0)</td>	<td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 1</td> <td class="fragment highlight-column" data-fragment-index="6">5</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">background-color</td>	<td class="fragment highlight-column" data-fragment-index="4">rgb(0,255,0)</td>	  <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">0</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">border-width</td>	    <td class="fragment highlight-column" data-fragment-index="4">3px</td>	          <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">1</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">border-style</td>	    <td class="fragment highlight-column" data-fragment-index="4">solid</td>	        <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">2</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">border-color</td>	    <td class="fragment highlight-column" data-fragment-index="4">rgb(255,0,0)</td>	  <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">3</td></tr>
-            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">font-size</td>	      <td class="fragment highlight-column" data-fragment-index="4">16px</td>	          <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">4</td></tr>
+            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td> <td class="fragment highlight-column" data-fragment-index="2">td .fancy-button</td>	  <td class="fragment highlight-column" data-fragment-index="3">background-color</td>	<td class="fragment highlight-column" data-fragment-index="4">rgb(255,255,0)</td>	<td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 1</td> <td class="fragment highlight-column" data-fragment-index="6">3</td></tr>
+            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">background-color</td>	<td class="fragment highlight-column" data-fragment-index="4">rgb(0,255,0)</td>	  <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">1</td></tr>
+            <tr><td class="fragment highlight-column" data-fragment-index="1">Author</td>	<td class="fragment highlight-column" data-fragment-index="2">.fancy-button</td>	    <td class="fragment highlight-column" data-fragment-index="3">border-width</td>	    <td class="fragment highlight-column" data-fragment-index="4">3px</td>	          <td class="fragment highlight-column" data-fragment-index="5">0 0 0 1 0</td> <td class="fragment highlight-column" data-fragment-index="6">2</td></tr>
+            <tr><td class="fragment highlight-column" data-fragment-index="1">User Agent</td>	<td class="fragment highlight-column" data-fragment-index="2">button</td>	    <td class="fragment highlight-column" data-fragment-index="3">border-color</td>	    <td class="fragment highlight-column" data-fragment-index="4">rgb(0,0,0)</td>	  <td class="fragment highlight-column" data-fragment-index="5">0 0 0 0 1</td> <td class="fragment highlight-column" data-fragment-index="6">0</td></tr>
           </table>
         </div>
         <div class="footnote" style="color: hsl(342, 50%, 40%); background: #eee">https://alistapart.com/article/braces-to-pixels</div>
@@ -845,7 +850,7 @@
       <div class="thanks">
         <div>Thanks!</div>
         <div>@ErinJZimmer</div>
-        <div>https://ejzimmer@github.io/browser-talk</div>
+        <div>https://browser.ez.codes</div>
       </div>
     </section>
 
