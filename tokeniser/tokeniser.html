@@ -69,7 +69,12 @@
 					clearInterval(interval);
 				}
 			}, 1000);
-		})
+		});
+		document.querySelector('body').addEventListener('keyup', (event) => {
+			if (event.key === 'ArrowRight' || event.key === 'PageDown') {
+				stateMachine.next.bind(stateMachine);
+			}
+		});
 
 		window.addEventListener('token', (event) => {
 			const token = document.createElement('output-token');
