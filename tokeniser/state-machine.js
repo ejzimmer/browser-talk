@@ -27,7 +27,7 @@ export class StateMachine extends HTMLElement {
 				}
 				.states {
 					display: grid;
-					grid-template-columns: repeat(auto-fill, 120px);
+					grid-template-columns: repeat(auto-fill, 180px);
 					grid-gap: 10px;
 				}
 				.token {

@@ -20,8 +20,8 @@ export class State extends HTMLElement {
 					position: relative;
 				}
 				.state {
-					--diameter: 120px;
-					border: 2px solid currentColor;
+					--diameter: 180px;
+					border: 4px solid currentColor;
 					border-radius: 50%;
 					width: var(--diameter);
 					height: var(--diameter);
@@ -33,12 +33,13 @@ export class State extends HTMLElement {
 					box-sizing: border-box;
 					text-align: center;
 					font-weight: bold;
+					font-size: 1.6em;
 					padding: 2px;
 				}
 
 				.current {
 					color: hsl(100, 90%, 50%);
-					border-width: 4px;
+					border-width: 8px;
 				}
 
 				.rules {
@@ -48,10 +49,12 @@ export class State extends HTMLElement {
 					left: calc(100% + 20px);
 					z-index: 1;
 					width: max-content;
-					padding: 2em;
+					padding: 1em;
 					list-style-type: none;
 					background: linear-gradient(to bottom, hsl(40, 30%, 70%), hsl(40, 20%, 80%));
 					border: 4px solid #555;
+					font-size: 2em;
+					font-family: Arial;
 				}
 
 				.rules li {
